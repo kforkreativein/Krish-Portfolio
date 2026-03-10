@@ -1716,7 +1716,7 @@ function ReelForm({ initial, projectId, onSave, onCancel, saving }) {
             </Field>
             <Field label="Google Drive URL" id={`reel-drive-${f.title || 'new'}`}><input id={`reel-drive-${f.title || 'new'}`} className={inputCls} value={f.drive_url} onChange={e => set('drive_url', e.target.value)} placeholder="https://drive.google.com/..." /></Field>
             <div className="grid grid-cols-2 gap-3">
-                <Field label="YouTube URL" id={`reel-yt-${f.title || 'new'}`}><input id={`reel-yt-${f.title || 'new'}`} className={inputCls} value={f.youtube_url || ''} onChange={e => set('youtube_url', e.target.value)} placeholder="https://youtube.com/..." /></Field>
+                <Field label="YouTube URL (Recommended ⚡)" id={`reel-yt-${f.title || 'new'}`}><input id={`reel-yt-${f.title || 'new'}`} className={inputCls} value={f.youtube_url || ''} onChange={e => set('youtube_url', e.target.value)} placeholder="https://youtube.com/..." /></Field>
                 <Field label="Instagram URL" id={`reel-ig-${f.title || 'new'}`}><input id={`reel-ig-${f.title || 'new'}`} className={inputCls} value={f.instagram_url || ''} onChange={e => set('instagram_url', e.target.value)} placeholder="https://instagram.com/..." /></Field>
             </div>
             <Field label="Thumbnail URL" id={`reel-thumb-url-${f.title || 'new'}`}>

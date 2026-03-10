@@ -51,6 +51,11 @@ function envUpdatePlugin() {
 
 export default defineConfig({
   plugins: [react(), envUpdatePlugin()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   server: {
     port: 5001,
     host: true,

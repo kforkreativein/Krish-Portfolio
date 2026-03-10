@@ -18,6 +18,7 @@ export default function Work({ onOpenModal, settings, siteContent }) {
     const scrollRef = useRef(null)
     const isScrollingProgrammatically = useRef(false)
     const scrollTimeout = useRef(null)
+    const hasRunOnce = useRef(false)
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -31,8 +32,13 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                 const visible = entry.isIntersecting
                 setIsInView(visible)
                 setIsPaused(!visible)
+
+                // Safety Kill Switch: Global cleanup if section is not visible
+                if (!visible) {
+                    document.querySelectorAll('video').forEach(v => v.pause())
+                }
             },
-            { threshold: 0.2 } // Trigger when 20% visible
+            { threshold: 0.1 } // More reactive than 0.2
         )
 
         if (sectionRef.current) observer.observe(sectionRef.current)
@@ -76,6 +82,7 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                             thumbnail_url: featured?.thumbnail_url || project.thumbnail_url,
                             source_url: featured?.instagram_url || featured?.video_url || project.video_url,
                             instagram_url: featured?.instagram_url || project.instagram_url,
+                            youtube_url: featured?.youtube_url || project.youtube_url,
                         }
                     })
                     setProjectsData(formattedData)
@@ -124,14 +131,60 @@ export default function Work({ onOpenModal, settings, siteContent }) {
         }
     }
 
+    // Run-once auto-scroll: 7s interval, hard stops at last slide forever.
     useEffect(() => {
-        if (!projectsData || projectsData.length === 0 || isPaused || !isInView) return
-        const intervalId = setInterval(() => {
-            const nextIndex = (activeIndex + 1) % projectsData.length
-            scrollToIndex(nextIndex)
-        }, 6000)
-        return () => clearInterval(intervalId)
-    }, [activeIndex, projectsData, isPaused, isInView])
+        let scrollTimer
+
+        if (isInView && !hasRunOnce.current && projectsData.length > 0) {
+            scrollTimer = setInterval(() => {
+                setActiveIndex(prevIndex => {
+                    if (prevIndex >= projectsData.length - 1) {
+                        hasRunOnce.current = true
+                        clearInterval(scrollTimer)
+                        return prevIndex
+                    }
+                    const next = prevIndex + 1
+                    scrollToIndex(next)
+                    return next
+                })
+            }, 7000)
+        }
+
+        return () => clearInterval(scrollTimer)
+    }, [isInView, projectsData.length])
+
+    // First-entry init: scroll to card 0 on first visit only.
+    useEffect(() => {
+        if (!isInView) return
+        if (hasRunOnce.current) return   // already completed — keep current position
+        if (activeIndex === null) {
+            const t = setTimeout(() => {
+                setActiveIndex(0)
+                scrollToIndex(0)
+            }, 50)
+            return () => clearTimeout(t)
+        }
+    }, [isInView])
+
+    const currentIndex = activeIndex
+
+    // Force active slide video playback whenever index or visibility changes.
+    useEffect(() => {
+        const videos = document.querySelectorAll('.work-video')
+
+        videos.forEach((video, index) => {
+            if (index === currentIndex && isInView) {
+                video.muted = false
+                video.play().catch(() => {
+                    video.muted = true
+                    video.play().catch((e) => console.log('Complete autoplay block', e))
+                })
+            } else {
+                video.pause()
+                video.currentTime = 0
+            }
+        })
+    }, [currentIndex, isInView])
 
     const activeProject = projectsData && projectsData.length > 0 ? projectsData[activeIndex] : null
 

@@ -124,7 +124,8 @@ export default function ProjectDetail() {
                                             video_url: reel.video_url,
                                             thumbnail_url: reel.thumbnail_url,
                                             source_url: reel.instagram_url || reel.video_url,
-                                            instagram_url: reel.instagram_url
+                                            instagram_url: reel.instagram_url,
+                                            youtube_url: reel.youtube_url || project.youtube_url || null,
                                         }}
                                         isActive={activeIndex === idx}
                                         idx={idx}

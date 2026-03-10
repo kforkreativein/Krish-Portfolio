@@ -108,7 +108,8 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
         caption: project.description || '',
         video_url: project.video_url || reels.find(r => r.video_url)?.video_url || null,
         thumbnail_url: project.thumbnail_url || reels.find(r => r.thumbnail_url)?.thumbnail_url || null,
-        instagram_url: project.instagram_url
+        instagram_url: project.instagram_url,
+        youtube_url: project.youtube_url || reels.find(r => r.youtube_url)?.youtube_url || null,
     } : null;
 
     return (
@@ -215,6 +216,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
                                     autoPlay={true}
                                     showCaption={false}
                                     showLabel={false}
+                                    forceMuted={true}
                                 />
                             </div>
                         )}

@@ -72,7 +72,7 @@ const HeroPhotoCard = ({ imageUrl, cardName, cardBadge, cardLocation }) => (
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col glass-strong rounded-[24px] overflow-hidden w-full max-w-[280px] md:w-[240px] lg:w-[280px] mx-auto shrink-0 shadow-2xl"
+        className="flex flex-col glass-strong rounded-[24px] overflow-hidden w-full max-w-[280px] md:w-[240px] lg:w-[280px] mx-auto shrink-0 shadow-2xl relative"
     >
         {/* Photo area — 16:9 */}
         <div className="relative overflow-hidden bg-bg" style={{ aspectRatio: '9/16', borderRadius: '16px 16px 0 0' }}>
