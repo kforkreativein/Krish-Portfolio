@@ -14,7 +14,7 @@ const TestimonialCard = ({ quote, author_name, author_role, author_initial, phot
                 <span className="font-heading font-extrabold text-[48px] text-accent leading-none opacity-40 select-none font-serif">
                     "
                 </span>
-                <div className="flex gap-1" aria-label={`${stars} stars`}>
+                <div className="flex gap-1" role="img" aria-label={`${stars} stars`}>
                     {[...Array(stars)].map((_, i) => (
                         <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-accent">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -29,7 +29,7 @@ const TestimonialCard = ({ quote, author_name, author_role, author_initial, phot
 
             <div className="flex items-center gap-4 mt-auto">
                 {photo_url ? (
-                    <img src={photo_url} alt={author_name} className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full object-cover border border-strong shrink-0" />
+                    <img src={photo_url} alt={author_name} width={42} height={42} className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full object-cover border border-strong shrink-0" />
                 ) : (
                     <div className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full border border-strong flex items-center justify-center shrink-0 bg-gradient-to-br from-bg-4 to-bg-2">
                         <span className="font-heading font-bold text-[14px] text-text">

@@ -69,6 +69,8 @@ export default function LogoStrip({ siteContent }) {
                                             <img
                                                 src={logoSrc}
                                                 alt={client.name}
+                                                width={160}
+                                                height={56}
                                                 className="h-10 md:h-14 w-auto object-contain transition-opacity duration-300 opacity-80 hover:opacity-100"
                                             />
                                         ) : (

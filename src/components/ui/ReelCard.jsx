@@ -108,7 +108,7 @@ export default function ReelCard({
                         src={videoSrc}
                         className="w-full h-full object-cover"
                         muted={isMuted}
-                        loop={autoPlay}
+                        loop
                         playsInline
                         disablePictureInPicture
                         controls={false}
@@ -118,7 +118,9 @@ export default function ReelCard({
                         onTimeUpdate={handleTimeUpdate}
                         onLoadedMetadata={handleLoadedMetadata}
                         onEnded={handleEnded}
-                    />
+                    >
+                        <track kind="captions" />
+                    </video>
 
                     <div className="absolute inset-0 z-20 group">
                         {reel.instagram_url && (
@@ -128,6 +130,7 @@ export default function ReelCard({
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                                 className={`absolute top-4 right-4 z-40 bg-black/60 backdrop-blur-md text-white/90 rounded-full font-medium flex items-center justify-center hover:bg-black/80 transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto ${showLabel ? 'px-3 py-1.5 text-xs gap-1.5' : 'w-9 h-9'}`}
+                                aria-label={showLabel ? "Open Post" : "Follow on Instagram"}
                             >
                                 <ExternalLink size={16} />
                                 {showLabel && "Open Post"}
@@ -138,6 +141,7 @@ export default function ReelCard({
                             <button
                                 onClick={(e) => { e.preventDefault(); togglePlay(e); }}
                                 className="absolute inset-0 m-auto w-16 h-16 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center z-10 transition hover:bg-black/50 pointer-events-auto"
+                                aria-label="Play video"
                             >
                                 <Play className="w-8 h-8 text-white fill-white ml-1" />
                             </button>
@@ -147,6 +151,7 @@ export default function ReelCard({
                             <button
                                 onClick={(e) => { e.preventDefault(); togglePlay(e); }}
                                 className="w-7 h-7 rounded-full border border-white/30 flex flex-shrink-0 items-center justify-center text-white hover:bg-white/20 transition"
+                                aria-label={isPlaying ? "Pause video" : "Play video"}
                             >
                                 {isPlaying ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
                             </button>
@@ -154,6 +159,7 @@ export default function ReelCard({
                             <button
                                 onClick={(e) => { e.preventDefault(); toggleMute(e); }}
                                 className="w-7 h-7 rounded-full border border-white/30 flex flex-shrink-0 items-center justify-center text-white hover:bg-white/20 transition"
+                                aria-label={isMuted ? "Unmute video" : "Mute video"}
                             >
                                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                             </button>
@@ -166,6 +172,7 @@ export default function ReelCard({
                                 onChange={handleSeek}
                                 onClick={(e) => e.stopPropagation()}
                                 className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer"
+                                aria-label="Video progress slider"
                             />
 
                             <span className="text-white text-[9px] font-mono tracking-wider flex-shrink-0 pr-1">
@@ -182,7 +189,7 @@ export default function ReelCard({
                     </div>
                 </>
             ) : reel.thumbnail_url ? (
-                <img src={reel.thumbnail_url} alt={reel.title || ''} className="w-full h-full object-cover" />
+                <img src={reel.thumbnail_url} alt={reel.title || ''} width={360} height={640} className="w-full h-full object-cover" />
             ) : (
                 <div className="w-full h-full bg-bg-4" />
             )}

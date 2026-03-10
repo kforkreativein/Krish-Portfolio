@@ -16,7 +16,7 @@ const categoryIconMap = {
 
 function ToolIcon({ tool }) {
     if (tool.icon_url) {
-        return <img src={tool.icon_url} alt={tool.name} className="w-[28px] h-[28px] object-contain" />
+        return <img src={tool.icon_url} alt={tool.name} width={28} height={28} className="w-[28px] h-[28px] object-contain" />
     }
     const cat = (tool.category || '').toUpperCase().trim()
     const Icon = categoryIconMap[cat] || Wrench

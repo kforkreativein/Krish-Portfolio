@@ -49,9 +49,9 @@ export default function Footer({ onOpenModal, siteContent }) {
     bgGray: '#f3f3f3',
     border: '#e5e5e5',
     textMain: '#111111',
-    textMuted: '#aaaaaa',
+    textMuted: '#666666',
     textKrish: '#111111',
-    textChhatrala: '#a8a8a8',
+    textChhatrala: '#737373',
     iconBorder: '#e0e0e0',
     iconBg: '#ffffff',
     pillBg: '#efefef',
@@ -78,19 +78,19 @@ export default function Footer({ onOpenModal, siteContent }) {
         }}
       >
         <div className="flex flex-col items-center md:items-start justify-start gap-3">
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Mail className="w-3 h-3" /> EMAIL -
           </div>
           <a href={`mailto:${siteContent?.contact_email || siteContent?.email || ''}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>{siteContent?.contact_email || siteContent?.email || 'kforkreativein@gmail.com'}</a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-center justify-center gap-3">
-          <div className="flex items-center md:items-start lg:items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
+          <div className="flex items-center md:items-start lg:items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Phone className="w-3 h-3" /> CALL TODAY -
           </div>
           <a href={`https://wa.me/${(siteContent?.contact_phone || '').replace(/\D/g, '') || ''}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>{siteContent?.contact_phone || '+919724690118'}</a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-end gap-3 md:col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 font-semibold"><Share2 className="w-3 h-3" /> SOCIAL :</div>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold"><Share2 className="w-3 h-3" /> SOCIAL :</div>
           <div className="flex items-center justify-center md:justify-start lg:justify-end gap-3">
             {socialLinks.map((social, i) => {
               const SocialIcon = getSocialIconByName(social.icon)
@@ -102,6 +102,7 @@ export default function Footer({ onOpenModal, siteContent }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center w-9 h-9 rounded-lg border border-neutral-200 dark:border-neutral-800 text-black dark:text-white hover:border-accent hover:text-accent transition-all duration-300"
+                  aria-label={`Follow on ${social.icon}`}
                 >
                   <SocialIcon className="w-4 h-4" />
                 </a>
@@ -117,7 +118,7 @@ export default function Footer({ onOpenModal, siteContent }) {
         borderTop: `1px solid ${v.border}`,
         padding: '10px 36px',
       }}>
-        <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '11px', fontWeight: 400, color: v.textMuted }}>© Copyright 2026. All Rights Reserved by Krish Chhatrala</span>
+        <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '11px', fontWeight: 400, color: isDark ? '#a1a1aa' : '#666666' }}>© Copyright 2026. All Rights Reserved by Krish Chhatrala</span>
       </div>
 
       {/* SECTION 3 — Hero name + SECTION 4, 5, 6 */}
@@ -203,6 +204,7 @@ export default function Footer({ onOpenModal, siteContent }) {
                   rel="noopener noreferrer"
                   className="w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
                   style={{ border: `1px solid ${v.iconBorder}`, backgroundColor: v.iconBg }}
+                  aria-label={`Follow on ${social.icon}`}
                 >
                   <SocialIcon className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-gray-200" />
                 </a>

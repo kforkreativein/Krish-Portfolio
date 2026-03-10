@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Volume2, VolumeX, Play, Pause, ExternalLink } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { useSettings } from '../hooks/useContent'
+import { useSettings, useSiteContent } from '../hooks/useContent'
 import { fadeUp, stagger } from '../constants/animations'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -46,6 +46,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
     const { slug } = useParams()
     const navigate = useNavigate()
     const { data: settingsFetched } = useSettings()
+    const { data: siteContent } = useSiteContent()
     const settings = settingsProp || settingsFetched
     const [project, setProject] = useState(null)
     const [reels, setReels] = useState([])
@@ -119,6 +120,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
                 <button
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-2 min-h-[44px] font-body text-[14px] text-text-muted hover:text-text transition-colors mb-10 group"
+                    aria-label="Go back to previous page"
                 >
                     <span className="group-hover:-translate-x-1 transition-transform duration-200 inline-block">←</span>
                     Back
@@ -265,7 +267,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
                         </motion.p>
                         <motion.div variants={fadeUp} className="flex justify-center">
                             <Button onClick={onOpenModal} className="w-full sm:w-auto px-10 py-4 text-lg font-extrabold group relative overflow-hidden bg-accent text-black hover:scale-105 transition-all duration-300">
-                                {settings?.floating_cta_text || "Let's Talk"}
+                                {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                             </Button>
                         </motion.div>
                     </motion.div>

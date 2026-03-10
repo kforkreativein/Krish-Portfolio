@@ -6,7 +6,7 @@ import Button from '../ui/Button'
 import PhoneCard from '../ui/PhoneCard'
 import { supabase } from '../../lib/supabase'
 
-export default function Work({ onOpenModal, settings }) {
+export default function Work({ onOpenModal, settings, siteContent }) {
     const navigate = useNavigate()
     const [projectsData, setProjectsData] = useState([])
     const [loading, setLoading] = useState(true)
@@ -173,7 +173,7 @@ export default function Work({ onOpenModal, settings }) {
                                     <div className="flex flex-col gap-4">
                                         {activeProject.is_cta ? (
                                             <Button onClick={onOpenModal} className="w-full md:w-auto justify-center font-extrabold">
-                                                {settings?.floating_cta_text || "Let's Talk"}
+                                                {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                                             </Button>
                                         ) : activeProject.slug ? (
                                             <Button onClick={() => navigate(`/work/${activeProject.slug}`)} variant="ghost" className="w-full md:w-auto justify-center">See Full Project →</Button>
@@ -189,7 +189,7 @@ export default function Work({ onOpenModal, settings }) {
                             <div ref={scrollRef} onScroll={handleScroll} className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-6 md:gap-8 pb-8 pt-4 px-5 md:px-8 lg:px-[52px] scroll-px-5 md:scroll-px-8 lg:scroll-px-[52px] no-scrollbar cursor-grab active:cursor-grabbing relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                 {projectsData.map((project, idx) => (
                                     <div key={project.id || idx} className="flex flex-col items-center gap-6">
-                                        <PhoneCard project={project} idx={idx} isActive={activeIndex === idx} onActivate={scrollToIndex} onOpenModal={onOpenModal} />
+                                        <PhoneCard project={project} idx={idx} isActive={activeIndex === idx} onActivate={scrollToIndex} onOpenModal={onOpenModal} settings={settings} siteContent={siteContent} />
                                     </div>
                                 ))}
                             </div>

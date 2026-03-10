@@ -162,6 +162,8 @@ export default function Services({ siteContent }) {
                                             <img
                                                 src={servicesData[openIndex].image_url}
                                                 alt={servicesData[openIndex].title}
+                                                width={400}
+                                                height={500}
                                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
                                         ) : (

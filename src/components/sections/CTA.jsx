@@ -73,7 +73,7 @@ export default function CTA({ onOpenModal, siteContent, settings: settingsProp }
 
                     <motion.div variants={fadeUp} className="relative z-20 w-full sm:w-auto">
                         <Button onClick={onOpenModal} className="w-full sm:w-auto px-[8px] py-[3px] text-[10px] sm:px-10 sm:py-4 sm:text-lg font-extrabold border border-white/10" style={{ minHeight: 24 }}>
-                            {settings?.floating_cta_text || "Let's Talk"}
+                            {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                         </Button>
                     </motion.div>
 

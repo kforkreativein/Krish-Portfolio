@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://krish-chhatrala.vercel.app/sitemap.xml

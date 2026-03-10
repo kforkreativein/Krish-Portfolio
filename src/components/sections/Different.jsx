@@ -55,6 +55,8 @@ export default function Different({ siteContent }) {
                                         <img
                                             src={settings?.different_photo_url || settings?.avatar_image_url}
                                             alt="Different"
+                                            width={500}
+                                            height={340}
                                             className="w-full h-full object-contain"
                                         />
                                     ) : (

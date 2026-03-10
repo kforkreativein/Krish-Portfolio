@@ -85,6 +85,7 @@ export default function Navbar({ onOpenModal, siteContent: siteContentProp }) {
             color: 'inherit',
             pointerEvents: 'auto',
           }}
+          aria-label={`${navLogoText} Home`}
         >
           {/* Avatar */}
           <div style={{
@@ -99,7 +100,9 @@ export default function Navbar({ onOpenModal, siteContent: siteContentProp }) {
             {navIconUrl ? (
               <img
                 src={navIconUrl}
-                alt="avatar"
+                alt="Profile photo"
+                width={32}
+                height={32}
                 style={{
                   width: 32,
                   height: 32,
@@ -163,7 +166,7 @@ export default function Navbar({ onOpenModal, siteContent: siteContentProp }) {
               alignItems: 'center',
             }}
           >
-            {settings?.floating_cta_text || "Let's Talk"}
+            {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
           </button>
         )}
 
@@ -224,7 +227,7 @@ export default function Navbar({ onOpenModal, siteContent: siteContentProp }) {
                   onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
                   onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
-                  {settings?.floating_cta_text || "Let's Talk"}
+                  {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                 </button>
               </motion.div>
             )}

@@ -154,7 +154,7 @@ export default function ProjectDetail() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {gallery_urls.map((url, i) => (
                                     <div key={i} className="rounded-[16px] overflow-hidden border border-strong bg-bg-2">
-                                        <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700" />
+                                        <img src={url} alt={`Gallery ${i + 1}`} width={800} height={1000} className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700" />
                                     </div>
                                 ))}
                             </div>

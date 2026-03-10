@@ -6,8 +6,9 @@ export default function ThemeToggle({ inline = false }) {
     const isDark = theme === 'dark'
 
     return (
-        <div
+        <button
             onClick={toggle}
+            aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] shadow-2xl"
             style={{
                 width: 60,
@@ -73,6 +74,6 @@ export default function ThemeToggle({ inline = false }) {
                 )}
                 <span style={{ position: 'relative', zIndex: 1, lineHeight: 1, filter: !isDark ? 'brightness(0) invert(1)' : 'none' }}>☀️</span>
             </div>
-        </div>
+        </button>
     )
 }

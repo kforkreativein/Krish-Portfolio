@@ -62,10 +62,10 @@ async function saveSettingsPatch(patch) {
     return supabase.from('settings').upsert(payload, { onConflict: 'key' })
 }
 
-function Field({ label, children, error }) {
+function Field({ label, id, children, error }) {
     return (
         <div className="flex flex-col">
-            {label && <label className={labelCls}>{label}</label>}
+            {label && <label htmlFor={id} className={labelCls}>{label}</label>}
             {children}
             {error && <p className="text-red-500 text-[11px] mt-1 font-body">{error}</p>}
         </div>
@@ -90,14 +90,18 @@ function HexColorPicker({ label, value, onChange }) {
         <Field label={label}>
             <div className="flex items-center gap-3 dark:bg-zinc-900 bg-gray-50 border border-border p-1.5 rounded-xl w-fit">
                 {/* Visual Swatch */}
+                <label htmlFor={`${label}-color`} className="sr-only">{label} color picker</label>
                 <input
+                    id={`${label}-color`}
                     type="color"
                     value={localValue}
                     onChange={handleColorChange}
                     className="w-8 h-8 rounded cursor-pointer border-0 bg-transparent p-0 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none [&::-webkit-color-swatch]:rounded-md"
                 />
                 {/* Hex Text Input */}
+                <label htmlFor={`${label}-hex`} className="sr-only">{label} hex input</label>
                 <input
+                    id={`${label}-hex`}
                     type="text"
                     value={localValue}
                     onChange={handleColorChange}
@@ -160,22 +164,24 @@ function MediaUpload({ label, sub, bucket, path, currentUrl, onSave, accept, pre
                 </div>
                 {/* Previews */}
                 {currentUrl && previewShape === 'circle' && (
-                    <img src={currentUrl} alt="preview" className="w-[80px] h-[80px] rounded-full object-cover border border-[rgba(255,255,255,0.1)] shrink-0 shadow-lg" />
+                    <img src={currentUrl} alt="preview" width={80} height={80} className="w-[80px] h-[80px] rounded-full object-cover border border-[rgba(255,255,255,0.1)] shrink-0 shadow-lg" />
                 )}
                 {currentUrl && previewShape === 'rect' && (
                     <div className="w-[160px] aspect-video border border-[rgba(255,255,255,0.1)] rounded-[8px] overflow-hidden shrink-0 shadow-lg bg-black">
                         {currentUrl.match(/\.(mp4|webm|ogg)$/i) ? (
-                            <video src={currentUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                            <video src={currentUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                                <track kind="captions" />
+                            </video>
                         ) : (
-                            <img src={currentUrl} alt="preview" className="w-full h-full object-cover" />
+                            <img src={currentUrl} alt="preview" width={80} height={142} className="w-full h-full object-cover" />
                         )}
                     </div>
                 )}
                 {currentUrl && previewShape === 'phone' && (
-                    <img src={currentUrl} alt="preview" className="w-[80px] h-[142px] rounded-[16px] object-cover border border-[rgba(255,255,255,0.1)] shrink-0 shadow-lg" />
+                    <img src={currentUrl} alt="preview" width={80} height={142} className="w-[80px] h-[142px] rounded-[16px] object-cover border border-[rgba(255,255,255,0.1)] shrink-0 shadow-lg" />
                 )}
                 {currentUrl && previewShape === 'logo' && (
-                    <img src={currentUrl} alt="preview" className="h-[40px] max-w-[120px] object-contain shrink-0" />
+                    <img src={currentUrl} alt="preview" width={120} height={40} className="h-[40px] max-w-[120px] object-contain shrink-0" />
                 )}
             </div>
 
@@ -191,7 +197,7 @@ function MediaUpload({ label, sub, bucket, path, currentUrl, onSave, accept, pre
                             <span className="text-[20px] mb-1">📁</span>
                             <span className="text-[12px] text-[#888888] font-body">Click to upload ({accept})</span>
                         </div>
-                        <input type="file" className="hidden" accept={accept} onChange={handleFileChange} disabled={uploading} />
+                        <input id={`upload-${label.replace(/\s+/g, '-').toLowerCase()}`} type="file" className="hidden" accept={accept} onChange={handleFileChange} disabled={uploading} />
                     </label>
                     {uploading && (
                         <div className="flex items-center gap-3">
@@ -204,7 +210,8 @@ function MediaUpload({ label, sub, bucket, path, currentUrl, onSave, accept, pre
                 </div>
             ) : (
                 <div className="flex gap-3">
-                    <input type="text" value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="https://..." className={inputCls} />
+                    <label htmlFor={`url-input-${label.replace(/\s+/g, '-').toLowerCase()}`} className="sr-only">{label} URL input</label>
+                    <input id={`url-input-${label.replace(/\s+/g, '-').toLowerCase()}`} type="text" value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="https://..." className={inputCls} />
                     <button onClick={handleUrlSave} className="px-5 h-[46px] dark:bg-zinc-800 bg-gray-100 border border-[rgba(255,255,255,0.1)] dark:text-white text-gray-900 font-body font-semibold text-[13px] rounded-[8px] hover:bg-[#222] transition-colors shrink-0">Save URL</button>
                 </div>
             )}
@@ -253,7 +260,9 @@ function AuthGate({ onAuth }) {
                 </span>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-[320px]">
+                <label htmlFor="admin-password" className="sr-only">Admin Password</label>
                 <input
+                    id="admin-password"
                     type="password"
                     placeholder="Enter password"
                     value={password}
@@ -559,44 +568,44 @@ function HeroTab({ showToast }) {
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">Hero Section</h2>
 
             <div className={cardCls + ' flex flex-col gap-6'}>
-                <Field label="Hero Badge">
-                    <input className={inputCls} value={form?.hero_badge || ''} onChange={e => setForm(prev => ({ ...prev, hero_badge: e.target.value }))} />
+                <Field label="Hero Badge" id="hero-badge">
+                    <input id="hero-badge" className={inputCls} value={form?.hero_badge || ''} onChange={e => setForm(prev => ({ ...prev, hero_badge: e.target.value }))} />
                 </Field>
                 <div className="grid grid-cols-1 gap-4">
-                    <Field label="Hero Heading Part 1">
-                        <input className={inputCls} value={form?.hero_heading_part1 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part1: e.target.value }))} />
+                    <Field label="Hero Heading Part 1" id="hero-h1">
+                        <input id="hero-h1" className={inputCls} value={form?.hero_heading_part1 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part1: e.target.value }))} />
                     </Field>
-                    <Field label="Hero Heading Part 2">
-                        <input className={inputCls} value={form?.hero_heading_part2 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part2: e.target.value }))} />
+                    <Field label="Hero Heading Part 2" id="hero-h2">
+                        <input id="hero-h2" className={inputCls} value={form?.hero_heading_part2 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part2: e.target.value }))} />
                     </Field>
-                    <Field label="Hero Heading Part 3 (Accent)">
-                        <input className={inputCls} value={form?.hero_heading_part3 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part3: e.target.value }))} />
+                    <Field label="Hero Heading Part 3 (Accent)" id="hero-h3">
+                        <input id="hero-h3" className={inputCls} value={form?.hero_heading_part3 || ''} onChange={e => setForm(prev => ({ ...prev, hero_heading_part3: e.target.value }))} />
                     </Field>
                 </div>
-                <Field label="Hero Subheading">
-                    <textarea rows={3} className={inputCls + ' resize-none'} value={form?.hero_subheading || ''} onChange={e => setForm(prev => ({ ...prev, hero_subheading: e.target.value }))} />
+                <Field label="Hero Subheading" id="hero-sub">
+                    <textarea id="hero-sub" rows={3} className={inputCls + ' resize-none'} value={form?.hero_subheading || ''} onChange={e => setForm(prev => ({ ...prev, hero_subheading: e.target.value }))} />
                 </Field>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field label="Primary Button Text">
-                        <input className={inputCls} value={form?.hero_primary_cta || ''} onChange={e => setForm(prev => ({ ...prev, hero_primary_cta: e.target.value }))} placeholder="Let's Talk" />
+                    <Field label="Primary Button Text" id="hero-cta1">
+                        <input id="hero-cta1" className={inputCls} value={form?.hero_primary_cta || ''} onChange={e => setForm(prev => ({ ...prev, hero_primary_cta: e.target.value }))} placeholder="Let's Talk" />
                     </Field>
-                    <Field label="Secondary Button Text">
-                        <input className={inputCls} value={form?.hero_secondary_cta || ''} onChange={e => setForm(prev => ({ ...prev, hero_secondary_cta: e.target.value }))} placeholder="View My Work" />
+                    <Field label="Secondary Button Text" id="hero-cta2">
+                        <input id="hero-cta2" className={inputCls} value={form?.hero_secondary_cta || ''} onChange={e => setForm(prev => ({ ...prev, hero_secondary_cta: e.target.value }))} placeholder="View My Work" />
                     </Field>
                 </div>
-                <Field label="Bottom Stats Text">
-                    <input className={inputCls} value={form?.hero_bottom_stats || ''} onChange={e => setForm(prev => ({ ...prev, hero_bottom_stats: e.target.value }))} placeholder="25+ clients · 100+ videos delivered · PAN India & international" />
+                <Field label="Bottom Stats Text" id="hero-stats">
+                    <input id="hero-stats" className={inputCls} value={form?.hero_bottom_stats || ''} onChange={e => setForm(prev => ({ ...prev, hero_bottom_stats: e.target.value }))} placeholder="25+ clients · 100+ videos delivered · PAN India & international" />
                 </Field>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field label="Hero Card Name">
-                        <input className={inputCls} value={form?.hero_card_name || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_name: e.target.value }))} placeholder="Krish Chhatrala" />
+                    <Field label="Hero Card Name" id="hero-card-name">
+                        <input id="hero-card-name" className={inputCls} value={form?.hero_card_name || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_name: e.target.value }))} placeholder="Krish Chhatrala" />
                     </Field>
-                    <Field label="Hero Card Badge">
-                        <input className={inputCls} value={form?.hero_card_badge || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_badge: e.target.value }))} placeholder="OPEN TO PROJECTS" />
+                    <Field label="Hero Card Badge" id="hero-card-badge">
+                        <input id="hero-card-badge" className={inputCls} value={form?.hero_card_badge || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_badge: e.target.value }))} placeholder="OPEN TO PROJECTS" />
                     </Field>
                 </div>
-                <Field label="Hero Card Location">
-                    <input className={inputCls} value={form?.hero_card_location || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_location: e.target.value }))} placeholder="Vadodara, Gujarat 🇮🇳" />
+                <Field label="Hero Card Location" id="hero-card-loc">
+                    <input id="hero-card-loc" className={inputCls} value={form?.hero_card_location || ''} onChange={e => setForm(prev => ({ ...prev, hero_card_location: e.target.value }))} placeholder="Vadodara, Gujarat 🇮🇳" />
                 </Field>
                 <button onClick={save} disabled={saving} className={btnPrimaryCls + ' self-start'}>
                     {saving ? 'Saving…' : 'Save Hero Text'}
@@ -676,14 +685,10 @@ function AboutDifferentTab({ showToast }) {
         <div className="max-w-[900px] flex flex-col gap-8">
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">About / Different</h2>
             <div className={cardCls + ' flex flex-col gap-6'}>
-                <Field label="Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={form?.diff_heading || ''} onChange={e => setForm(prev => ({ ...prev, diff_heading: e.target.value }))} />
-                </Field>
-                <Field label="Text">
-                    <textarea rows={5} className={inputCls + ' resize-none'} value={form?.diff_text || ''} onChange={e => setForm(prev => ({ ...prev, diff_text: e.target.value }))} />
-                </Field>
-                <Field label="About Button Text">
-                    <input className={inputCls} value={form?.about_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, about_cta_text: e.target.value }))} placeholder="Browse My Work →" />
+                <Field label="Heading" id="diff-h"><textarea id="diff-h" rows={2} className={inputCls + ' resize-none'} value={form?.diff_heading || ''} onChange={e => setForm(prev => ({ ...prev, diff_heading: e.target.value }))} /></Field>
+                <Field label="Main Text" id="diff-txt"><textarea id="diff-txt" rows={5} className={inputCls + ' resize-none'} value={form?.diff_text || ''} onChange={e => setForm(prev => ({ ...prev, diff_text: e.target.value }))} /></Field>
+                <Field label="About Button Text" id="about-cta">
+                    <input id="about-cta" className={inputCls} value={form?.about_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, about_cta_text: e.target.value }))} placeholder="Browse My Work →" />
                 </Field>
                 <button onClick={save} disabled={saving} className={btnPrimaryCls + ' self-start'}>
                     {saving ? 'Saving…' : 'Save About Text'}
@@ -721,21 +726,23 @@ function DynamicList({ label, items, onChange, placeholder = "Add item..." }) {
             <div className="flex flex-col gap-2">
                 {(items || []).map((item, i) => (
                     <div key={i} className="flex items-center gap-2">
-                        <input className={inputCls} value={item} readOnly />
-                        <button onClick={() => remove(i)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors">
+                        <input className={inputCls} value={item} readOnly aria-label={`${label} item ${i + 1}`} />
+                        <button onClick={() => remove(i)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors" aria-label={`Remove ${label} item ${i + 1}`}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                         </button>
                     </div>
                 ))}
                 <div className="flex items-center gap-2 mt-1">
                     <input
+                        id={`dynamic-add-${label.replace(/\s+/g, '-').toLowerCase()}`}
                         className={inputCls}
                         value={newItem}
                         onChange={e => setNewItem(e.target.value)}
                         placeholder={placeholder}
                         onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
+                        aria-label={`Add new ${label}`}
                     />
-                    <button onClick={add} className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors">
+                    <button onClick={add} className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors" aria-label={`Add ${label} item`}>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                     </button>
                 </div>
@@ -746,7 +753,7 @@ function DynamicList({ label, items, onChange, placeholder = "Add item..." }) {
 
 function SocialLinksManager({ links, onChange }) {
     const addLink = () => {
-        onChange([...(links || []), { platform: '', url: '', icon: 'Globe' }])
+        onChange([...(links || []), { id: Date.now(), platform: '', url: '', icon: 'Globe' }])
     }
 
     const removeLink = (index) => {
@@ -766,15 +773,15 @@ function SocialLinksManager({ links, onChange }) {
             {(links || []).map((item, index) => {
                 const IconPreview = getSocialIconByName(item?.icon)
                 return (
-                    <div key={`${item?.platform || 'social'}-${index}`} className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr_auto] gap-3 items-end border border-border rounded-lg p-3 bg-gray-50 dark:bg-zinc-900">
-                        <Field label="Platform">
-                            <input className={inputCls} value={item?.platform || ''} onChange={(e) => updateLink(index, 'platform', e.target.value)} placeholder="Instagram" />
+                    <div key={item?.id || index} className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr_auto] gap-3 items-end border border-border rounded-lg p-3 bg-gray-50 dark:bg-zinc-900">
+                        <Field label="Platform" id={`social-platform-${index}`}>
+                            <input id={`social-platform-${index}`} className={inputCls} value={item?.platform || ''} onChange={(e) => updateLink(index, 'platform', e.target.value)} placeholder="Instagram" />
                         </Field>
-                        <Field label="URL">
-                            <input className={inputCls} value={item?.url || ''} onChange={(e) => updateLink(index, 'url', e.target.value)} placeholder="https://..." />
+                        <Field label="URL" id={`social-url-${index}`}>
+                            <input id={`social-url-${index}`} className={inputCls} value={item?.url || ''} onChange={(e) => updateLink(index, 'url', e.target.value)} placeholder="https://..." />
                         </Field>
-                        <Field label="Icon">
-                            <select className={inputCls} value={item?.icon || 'Globe'} onChange={(e) => updateLink(index, 'icon', e.target.value)}>
+                        <Field label="Icon" id={`social-icon-${index}`}>
+                            <select id={`social-icon-${index}`} className={inputCls} value={item?.icon || 'Globe'} onChange={(e) => updateLink(index, 'icon', e.target.value)}>
                                 {(SOCIAL_ICON_OPTIONS || []).map((iconName) => (
                                     <option key={iconName} value={iconName}>{iconName}</option>
                                 ))}
@@ -785,6 +792,7 @@ function SocialLinksManager({ links, onChange }) {
                                 <IconPreview size={18} className="text-accent" />
                             </div>
                             <button onClick={() => removeLink(index)} className="w-11 h-11 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
+                                <span className="sr-only">Remove link</span>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                             </button>
                         </div>
@@ -848,17 +856,13 @@ function ShowreelTab({ showToast }) {
         <div className="max-w-[900px] flex flex-col gap-8">
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">Showreel</h2>
             <div className={cardCls + ' flex flex-col gap-6'}>
-                <Field label="Section Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={form?.showreel_heading || ''} onChange={e => setForm(prev => ({ ...prev, showreel_heading: e.target.value }))} />
+                <Field label="Heading" id="reel-h"><textarea id="reel-h" rows={2} className={inputCls + ' resize-none'} value={form?.showreel_heading || ''} onChange={e => setForm(prev => ({ ...prev, showreel_heading: e.target.value }))} /></Field>
+                <Field label="Title" id="reel-t"><input id="reel-t" className={inputCls} value={form?.showreel_title || ''} onChange={e => setForm(prev => ({ ...prev, showreel_title: e.target.value }))} /></Field>
+                <Field label="Subtext" id="reel-sub">
+                    <textarea id="reel-sub" rows={3} className={inputCls + ' resize-none'} value={form?.showreel_subtext || ''} onChange={e => setForm(prev => ({ ...prev, showreel_subtext: e.target.value }))} />
                 </Field>
-                <Field label="Showreel Title">
-                    <input className={inputCls} value={form?.showreel_title || ''} onChange={e => setForm(prev => ({ ...prev, showreel_title: e.target.value }))} />
-                </Field>
-                <Field label="Showreel Subtext">
-                    <textarea rows={3} className={inputCls + ' resize-none'} value={form?.showreel_subtext || ''} onChange={e => setForm(prev => ({ ...prev, showreel_subtext: e.target.value }))} />
-                </Field>
-                <Field label="Showreel Video URL">
-                    <input className={inputCls} value={form?.showreel_video_url || ''} onChange={e => setForm(prev => ({ ...prev, showreel_video_url: e.target.value }))} placeholder="https://..." />
+                <Field label="Video URL" id="reel-url">
+                    <input id="reel-url" className={inputCls} value={form?.showreel_video_url || ''} onChange={e => setForm(prev => ({ ...prev, showreel_video_url: e.target.value }))} placeholder="https://..." />
                 </Field>
                 <button onClick={save} disabled={saving} className={btnPrimaryCls + ' self-start'}>
                     {saving ? 'Saving…' : 'Save Showreel Content'}
@@ -928,21 +932,15 @@ function CTALevelUpTab({ showToast }) {
         <div className="max-w-[900px] flex flex-col gap-8">
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">CTA / Level Up</h2>
             <div className={cardCls + ' flex flex-col gap-6'}>
-                <Field label="CTA Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={form?.cta_heading || ''} onChange={e => setForm(prev => ({ ...prev, cta_heading: e.target.value }))} />
-                </Field>
-                <Field label="CTA Subheading">
-                    <textarea rows={3} className={inputCls + ' resize-none'} value={form?.cta_subheading || ''} onChange={e => setForm(prev => ({ ...prev, cta_subheading: e.target.value }))} />
-                </Field>
+                <Field label="Heading" id="cta-h"><textarea id="cta-h" rows={2} className={inputCls + ' resize-none'} value={form?.cta_heading || ''} onChange={e => setForm(prev => ({ ...prev, cta_heading: e.target.value }))} /></Field>
+                <Field label="Subheading" id="cta-sub"><textarea id="cta-sub" rows={3} className={inputCls + ' resize-none'} value={form?.cta_subheading || ''} onChange={e => setForm(prev => ({ ...prev, cta_subheading: e.target.value }))} /></Field>
                 <DynamicList
                     label="CTA Pills"
                     items={form?.cta_pills || []}
                     onChange={(value) => setForm(prev => ({ ...prev, cta_pills: value }))}
                     placeholder="Add CTA pill text..."
                 />
-                <Field label="Level Up Button Text">
-                    <input className={inputCls} value={form?.level_up_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, level_up_cta_text: e.target.value }))} placeholder="Let's Talk →" />
-                </Field>
+                <Field label="Button Text" id="cta-btn"><input id="cta-btn" className={inputCls} value={form?.level_up_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, level_up_cta_text: e.target.value }))} placeholder="Let's Talk →" /></Field>
                 <button onClick={save} disabled={saving} className={btnPrimaryCls + ' self-start'}>
                     {saving ? 'Saving…' : 'Save CTA Content'}
                 </button>
@@ -1003,7 +1001,9 @@ function GlobalUITab({ showToast }) {
                     theme_btn_filled_text_dark: data?.theme_btn_filled_text_dark || '#000000',
                     theme_btn_ghost_text_light: data?.theme_btn_ghost_text_light || '#000000',
                     theme_btn_ghost_text_dark: data?.theme_btn_ghost_text_dark || '#FFFFFF',
-                    dynamic_social_links: Array.isArray(data?.dynamic_social_links) ? data.dynamic_social_links : [],
+                    dynamic_social_links: Array.isArray(data?.dynamic_social_links)
+                        ? data.dynamic_social_links.map(l => ({ ...l, id: l.id || Math.random() }))
+                        : [],
                 })
             } catch (err) {
                 console.error('[GlobalUITab] load error:', err)
@@ -1105,12 +1105,10 @@ function GlobalUITab({ showToast }) {
 
                 <div className="pt-6 border-t border-border flex flex-col gap-4">
                     <p className="font-heading font-semibold text-[16px] dark:text-white text-gray-900">Floating CTA</p>
-                    <Field label="Floating CTA Text">
-                        <input className={inputCls} value={form?.floating_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, floating_cta_text: e.target.value }))} />
-                    </Field>
-                    <Field label="Floating CTA Link">
-                        <input className={inputCls} value={form?.floating_cta_link || ''} onChange={e => setForm(prev => ({ ...prev, floating_cta_link: e.target.value }))} placeholder="#contact or https://..." />
-                    </Field>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Field label="CTA Button Text" id="float-cta-txt"><input id="float-cta-txt" className={inputCls} value={form?.floating_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, floating_cta_text: e.target.value }))} /></Field>
+                        <Field label="CTA Button Link" id="float-cta-link"><input id="float-cta-link" className={inputCls} value={form?.floating_cta_link || ''} onChange={e => setForm(prev => ({ ...prev, floating_cta_link: e.target.value }))} placeholder="#contact or https://..." /></Field>
+                    </div>
                 </div>
 
                 <div className="pt-6 border-t border-border flex flex-col gap-4">
@@ -1237,12 +1235,8 @@ function FooterTab({ showToast }) {
         <div className="max-w-[900px] flex flex-col gap-8">
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">Footer</h2>
             <div className={cardCls + ' flex flex-col gap-6'}>
-                <Field label="Footer Big Text">
-                    <input className={inputCls} value={form?.footer_big_text || ''} onChange={e => setForm(prev => ({ ...prev, footer_big_text: e.target.value }))} placeholder="Krish Chhatrala" />
-                </Field>
-                <Field label="Footer Copyright Text">
-                    <input className={inputCls} value={form?.footer_text || ''} onChange={e => setForm(prev => ({ ...prev, footer_text: e.target.value }))} />
-                </Field>
+                <Field label="Footer Big Text" id="foot-big"><input id="foot-big" className={inputCls} value={form?.footer_big_text || ''} onChange={e => setForm(prev => ({ ...prev, footer_big_text: e.target.value }))} placeholder="Krish Chhatrala" /></Field>
+                <Field label="Footer Subtext" id="foot-sub"><input id="foot-sub" className={inputCls} value={form?.footer_text || ''} onChange={e => setForm(prev => ({ ...prev, footer_text: e.target.value }))} /></Field>
                 <button onClick={save} disabled={saving} className={btnPrimaryCls + ' self-start'}>
                     {saving ? 'Saving…' : 'Save Footer'}
                 </button>
@@ -1430,16 +1424,22 @@ function SpacingTab({ showToast }) {
             <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] gap-4 py-4 border-b border-gray-100 dark:border-zinc-800 last:border-0 items-center">
                 <span className="font-body text-[13px] font-semibold text-gray-900 dark:text-white">{label}</span>
                 <div className="flex gap-1 justify-center">
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_mob] || ''} onChange={e => handleUpdate(t_mob, e.target.value)} placeholder="T" />
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_mob] || ''} onChange={e => handleUpdate(b_mob, e.target.value)} placeholder="B" />
+                    <label htmlFor={t_mob} className="sr-only">{label} Mobile Top padding</label>
+                    <input id={t_mob} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_mob] || ''} onChange={e => handleUpdate(t_mob, e.target.value)} placeholder="T" />
+                    <label htmlFor={b_mob} className="sr-only">{label} Mobile Bottom padding</label>
+                    <input id={b_mob} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_mob] || ''} onChange={e => handleUpdate(b_mob, e.target.value)} placeholder="B" />
                 </div>
                 <div className="flex gap-1 justify-center">
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_tab] || ''} onChange={e => handleUpdate(t_tab, e.target.value)} placeholder="T" />
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_tab] || ''} onChange={e => handleUpdate(b_tab, e.target.value)} placeholder="B" />
+                    <label htmlFor={t_tab} className="sr-only">{label} Tablet Top padding</label>
+                    <input id={t_tab} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_tab] || ''} onChange={e => handleUpdate(t_tab, e.target.value)} placeholder="T" />
+                    <label htmlFor={b_tab} className="sr-only">{label} Tablet Bottom padding</label>
+                    <input id={b_tab} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_tab] || ''} onChange={e => handleUpdate(b_tab, e.target.value)} placeholder="B" />
                 </div>
                 <div className="flex gap-1 justify-center">
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_desk] || ''} onChange={e => handleUpdate(t_desk, e.target.value)} placeholder="T" />
-                    <input className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_desk] || ''} onChange={e => handleUpdate(b_desk, e.target.value)} placeholder="B" />
+                    <label htmlFor={t_desk} className="sr-only">{label} Desktop Top padding</label>
+                    <input id={t_desk} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[t_desk] || ''} onChange={e => handleUpdate(t_desk, e.target.value)} placeholder="T" />
+                    <label htmlFor={b_desk} className="sr-only">{label} Desktop Bottom padding</label>
+                    <input id={b_desk} className="w-12 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded p-1.5 text-[11px] text-center dark:text-white" value={paddings[b_desk] || ''} onChange={e => handleUpdate(b_desk, e.target.value)} placeholder="B" />
                 </div>
             </div>
         )
@@ -1473,14 +1473,14 @@ function SpacingTab({ showToast }) {
             <div>
                 <h3 className="font-heading font-bold text-[18px] dark:text-white text-gray-900 mb-4">Global Side Padding</h3>
                 <div className={cardCls + ' grid grid-cols-1 md:grid-cols-3 gap-8'}>
-                    <Field label="Mobile Side">
-                        <input className={inputCls} value={paddings.pad_side_mob || ''} onChange={e => handleUpdate('pad_side_mob', e.target.value)} placeholder="20px" />
+                    <Field label="Mobile Side" id="side-mob">
+                        <input id="side-mob" className={inputCls} value={paddings.pad_side_mob || ''} onChange={e => handleUpdate('pad_side_mob', e.target.value)} placeholder="20px" />
                     </Field>
-                    <Field label="Tablet Side">
-                        <input className={inputCls} value={paddings.pad_side_tab || ''} onChange={e => handleUpdate('pad_side_tab', e.target.value)} placeholder="32px" />
+                    <Field label="Tablet Side" id="side-tab">
+                        <input id="side-tab" className={inputCls} value={paddings.pad_side_tab || ''} onChange={e => handleUpdate('pad_side_tab', e.target.value)} placeholder="32px" />
                     </Field>
-                    <Field label="Desktop Side">
-                        <input className={inputCls} value={paddings.pad_side_desk || ''} onChange={e => handleUpdate('pad_side_desk', e.target.value)} placeholder="52px" />
+                    <Field label="Desktop Side" id="side-desk">
+                        <input id="side-desk" className={inputCls} value={paddings.pad_side_desk || ''} onChange={e => handleUpdate('pad_side_desk', e.target.value)} placeholder="52px" />
                     </Field>
                 </div>
             </div>
@@ -1494,12 +1494,12 @@ function ServiceForm({ initial, onSave, onCancel, saving }) {
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Number"><input className={inputCls} value={f.number} onChange={e => set('number', e.target.value)} placeholder="01" /></Field>
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Number" id="diff-step-num"><input id="diff-step-num" className={inputCls} value={f.number} onChange={e => set('number', e.target.value)} placeholder="01" /></Field>
+                <Field label="Sort Order" id="diff-step-sort"><input id="diff-step-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
-            <Field label="Title"><input className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} /></Field>
-            <Field label="Description"><textarea rows={3} className={inputCls + ' resize-none'} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
-            <Field label="Tags (comma separated)"><input className={inputCls} value={f.tags} onChange={e => set('tags', e.target.value)} placeholder="React, Tailwind, Framer" /></Field>
+            <Field label="Title" id="diff-step-title"><input id="diff-step-title" className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} /></Field>
+            <Field label="Description" id="diff-step-desc"><textarea id="diff-step-desc" rows={3} className={inputCls + ' resize-none'} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
+            <Field label="Tags (comma separated)" id="diff-step-tags"><input id="diff-step-tags" className={inputCls} value={f.tags} onChange={e => set('tags', e.target.value)} placeholder="React, Tailwind, Framer" /></Field>
             <DynamicList label="Bullet Points" items={f.bullet_points || []} onChange={val => set('bullet_points', val)} />
 
             <div className="pt-4 border-t border-border mt-2">
@@ -1514,14 +1514,12 @@ function ServiceForm({ initial, onSave, onCancel, saving }) {
                 />
             </div>
 
-            <label className="flex items-center gap-3 cursor-pointer mt-2">
-                <input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+            <label htmlFor="service-active" className="flex items-center gap-3 cursor-pointer mt-2">
+                <input id="service-active" type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
                 <span className="font-body text-[14px] dark:text-white text-gray-900">Active</span>
             </label>
             <div className="flex gap-3 mt-2">
-                <button onClick={() => onSave(f)} disabled={saving} className={btnPrimaryCls}>
-                    {saving ? 'Saving…' : 'Save'}
-                </button>
+                <button onClick={() => onSave(f)} disabled={saving} className={btnPrimaryCls}>{saving ? 'Saving…' : 'Save'}</button>
                 <button onClick={onCancel} className={btnSecondaryCls}>Cancel</button>
             </div>
         </div>
@@ -1599,8 +1597,8 @@ function ServicesTab({ showToast }) {
         <div>
             {confirm && <ConfirmModal message="Delete this service?" onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
             <div className={cardCls + ' mb-6 flex flex-col gap-4'}>
-                <Field label="Services Section Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={servicesHeading || ''} onChange={e => setServicesHeading(e.target.value)} />
+                <Field label="Services Section Heading" id="serv-h">
+                    <textarea id="serv-h" rows={2} className={inputCls + ' resize-none'} value={servicesHeading || ''} onChange={e => setServicesHeading(e.target.value)} />
                 </Field>
                 <button onClick={saveHeading} disabled={savingHeading} className={btnPrimaryCls + ' self-start'}>
                     {savingHeading ? 'Saving…' : 'Save Heading'}
@@ -1687,16 +1685,16 @@ function ReelForm({ initial, projectId, onSave, onCancel, saving }) {
     return (
         <div className="dark:bg-zinc-900 bg-gray-100 border border-border rounded-[10px] p-4 flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-                <Field label="Title"><input className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} placeholder="Reel title..." /></Field>
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', e.target.value)} /></Field>
+                <Field label="Title" id={`reel-title-${f.title || 'new'}`}><input id={`reel-title-${f.title || 'new'}`} className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} placeholder="Reel title..." /></Field>
+                <Field label="Sort Order" id={`reel-sort-${f.title || 'new'}`}><input id={`reel-sort-${f.title || 'new'}`} type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', e.target.value)} /></Field>
             </div>
-            <Field label="Caption"><textarea rows={2} className={inputCls + ' resize-none'} value={f.caption} onChange={e => set('caption', e.target.value)} placeholder="Short caption..." /></Field>
-            <Field label="Video URL (MP4)">
+            <Field label="Caption" id={`reel-caption-${f.title || 'new'}`}><textarea id={`reel-caption-${f.title || 'new'}`} rows={2} className={inputCls + ' resize-none'} value={f.caption} onChange={e => set('caption', e.target.value)} placeholder="Short caption..." /></Field>
+            <Field label="Video URL (MP4)" id={`reel-video-url-${f.title || 'new'}`}>
                 <div className="flex gap-2">
-                    <input className={inputCls} value={f.video_url} onChange={e => set('video_url', e.target.value)} placeholder="https://..." />
-                    <label className={`shrink-0 flex items-center justify-center px-4 rounded-[8px] border font-body text-[13px] font-semibold cursor-pointer transition-all ${uploadingVideo ? 'border-border dark:bg-zinc-800 bg-gray-100 dark:text-[#555] text-gray-400 cursor-not-allowed' : 'border-accent/20 bg-accent/5 text-accent hover:bg-accent hover:text-white dark:hover:text-black'}`}>
+                    <input id={`reel-video-url-${f.title || 'new'}`} className={inputCls} value={f.video_url} onChange={e => set('video_url', e.target.value)} placeholder="https://..." />
+                    <label htmlFor={`upload-video-${f.title}`} className={`shrink-0 flex items-center justify-center px-4 rounded-[8px] border font-body text-[13px] font-semibold cursor-pointer transition-all ${uploadingVideo ? 'border-border dark:bg-zinc-800 bg-gray-100 dark:text-[#555] text-gray-400 cursor-not-allowed' : 'border-accent/20 bg-accent/5 text-accent hover:bg-accent hover:text-white dark:hover:text-black'}`}>
                         {uploadingVideo ? 'Uploading...' : 'Upload Video'}
-                        <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => handleFileUpload(e, 'video')} disabled={uploadingVideo} />
+                        <input id={`upload-video-${f.title}`} type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => handleFileUpload(e, 'video')} disabled={uploadingVideo} />
                     </label>
                 </div>
                 {/* Reel Preview — appears immediately after upload auto-fills the URL */}
@@ -1710,30 +1708,32 @@ function ReelForm({ initial, projectId, onSave, onCancel, saving }) {
                             muted
                             playsInline
                             className="w-full h-full object-cover"
-                        />
+                        >
+                            <track kind="captions" />
+                        </video>
                     </div>
                 )}
             </Field>
-            <Field label="Google Drive URL"><input className={inputCls} value={f.drive_url} onChange={e => set('drive_url', e.target.value)} placeholder="https://drive.google.com/..." /></Field>
+            <Field label="Google Drive URL" id={`reel-drive-${f.title || 'new'}`}><input id={`reel-drive-${f.title || 'new'}`} className={inputCls} value={f.drive_url} onChange={e => set('drive_url', e.target.value)} placeholder="https://drive.google.com/..." /></Field>
             <div className="grid grid-cols-2 gap-3">
-                <Field label="YouTube URL"><input className={inputCls} value={f.youtube_url || ''} onChange={e => set('youtube_url', e.target.value)} placeholder="https://youtube.com/..." /></Field>
-                <Field label="Instagram URL"><input className={inputCls} value={f.instagram_url || ''} onChange={e => set('instagram_url', e.target.value)} placeholder="https://instagram.com/..." /></Field>
+                <Field label="YouTube URL" id={`reel-yt-${f.title || 'new'}`}><input id={`reel-yt-${f.title || 'new'}`} className={inputCls} value={f.youtube_url || ''} onChange={e => set('youtube_url', e.target.value)} placeholder="https://youtube.com/..." /></Field>
+                <Field label="Instagram URL" id={`reel-ig-${f.title || 'new'}`}><input id={`reel-ig-${f.title || 'new'}`} className={inputCls} value={f.instagram_url || ''} onChange={e => set('instagram_url', e.target.value)} placeholder="https://instagram.com/..." /></Field>
             </div>
-            <Field label="Thumbnail URL">
+            <Field label="Thumbnail URL" id={`reel-thumb-url-${f.title || 'new'}`}>
                 <div className="flex gap-2">
-                    <input className={inputCls} value={f.thumbnail_url} onChange={e => set('thumbnail_url', e.target.value)} placeholder="https://..." />
-                    <label className={`shrink-0 flex items-center justify-center px-4 rounded-[8px] border font-body text-[13px] font-semibold cursor-pointer transition-all ${uploadingThumb ? 'border-border dark:bg-zinc-800 bg-gray-100 dark:text-[#555] text-gray-400 cursor-not-allowed' : 'border-accent/20 bg-accent/5 text-accent hover:bg-accent hover:text-white dark:hover:text-black'}`}>
+                    <input id={`reel-thumb-url-${f.title || 'new'}`} className={inputCls} value={f.thumbnail_url} onChange={e => set('thumbnail_url', e.target.value)} placeholder="https://..." />
+                    <label htmlFor={`upload-thumb-${f.title}`} className={`shrink-0 flex items-center justify-center px-4 rounded-[8px] border font-body text-[13px] font-semibold cursor-pointer transition-all ${uploadingThumb ? 'border-border dark:bg-zinc-800 bg-gray-100 dark:text-[#555] text-gray-400 cursor-not-allowed' : 'border-accent/20 bg-accent/5 text-accent hover:bg-accent hover:text-white dark:hover:text-black'}`}>
                         {uploadingThumb ? 'Uploading...' : 'Upload Image'}
-                        <input type="file" accept="image/*" className="hidden" onChange={e => handleFileUpload(e, 'thumb')} disabled={uploadingThumb} />
+                        <input id={`upload-thumb-${f.title}`} type="file" accept="image/*" className="hidden" onChange={e => handleFileUpload(e, 'thumb')} disabled={uploadingThumb} />
                     </label>
                 </div>
                 {/* Thumbnail preview */}
                 {f.thumbnail_url && (
-                    <img src={f.thumbnail_url} alt="thumb preview" className="mt-2 rounded-[8px] max-h-[80px] object-cover border border-border" />
+                    <img src={f.thumbnail_url} alt="thumb preview" width={120} height={80} className="mt-2 rounded-[8px] max-h-[80px] object-cover border border-border" />
                 )}
             </Field>
-            <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+            <label htmlFor={`reel-active-${f.title || 'new'}`} className="flex items-center gap-2 cursor-pointer">
+                <input id={`reel-active-${f.title || 'new'}`} type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
                 <span className="font-body text-[13px] dark:text-white text-gray-900">Active</span>
             </label>
             <div className="flex gap-2">
@@ -1821,7 +1821,9 @@ function ReelsManager({ projectId }) {
                                             muted
                                             playsInline
                                             className="w-full h-full object-cover"
-                                        />
+                                        >
+                                            <track kind="captions" />
+                                        </video>
                                     </div>
                                 ) : (
                                     <div className="shrink-0 w-[40px] h-[70px] rounded-[6px] border border-dashed border-border dark:bg-zinc-800 bg-gray-100 flex items-center justify-center">
@@ -1898,29 +1900,35 @@ function ProjectForm({ initial, onSave, onCancel, saving }) {
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Category"><input className={inputCls} value={f.category} onChange={e => set('category', e.target.value)} /></Field>
-                <Field label="Emoji"><input className={inputCls} value={f.emoji} onChange={e => set('emoji', e.target.value)} placeholder="🎬" /></Field>
+                <Field label="Category" id="proj-cat"><input id="proj-cat" className={inputCls} value={f.category} onChange={e => set('category', e.target.value)} /></Field>
+                <Field label="Emoji" id="proj-emoji"><input id="proj-emoji" className={inputCls} value={f.emoji} onChange={e => set('emoji', e.target.value)} placeholder="🎬" /></Field>
             </div>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Title"><input className={inputCls} value={f.title} onChange={handleTitleChange} /></Field>
-                <Field label="Slug" sub="For /work/slug URL"><input className={inputCls} value={f.slug} onChange={e => set('slug', e.target.value)} placeholder="my-project" /></Field>
+                <Field label="Title" id="proj-title"><input id="proj-title" className={inputCls} value={f.title} onChange={handleTitleChange} /></Field>
+                <Field label="Slug" id="proj-slug" sub="For /work/slug URL"><input id="proj-slug" className={inputCls} value={f.slug} onChange={e => set('slug', e.target.value)} placeholder="my-project" /></Field>
             </div>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Client Name"><input className={inputCls} value={f.client_name || ''} onChange={e => set('client_name', e.target.value)} /></Field>
-                <Field label="Role"><input className={inputCls} value={f.role || ''} onChange={e => set('role', e.target.value)} placeholder="Lead Editor" /></Field>
+                <Field label="Client Name" id="proj-client"><input id="proj-client" className={inputCls} value={f.client_name || ''} onChange={e => set('client_name', e.target.value)} /></Field>
+                <Field label="Role" id="proj-role"><input id="proj-role" className={inputCls} value={f.role || ''} onChange={e => set('role', e.target.value)} placeholder="Lead Editor" /></Field>
             </div>
-            <Field label="Short Description" sub="For the carousel card"><textarea rows={2} className={inputCls + ' resize-none'} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
-            <Field label="Full Content" sub="For the dedicated project page"><textarea rows={6} className={inputCls + ' resize-none'} value={f.full_content || ''} onChange={e => set('full_content', e.target.value)} placeholder="Detailed project breakdown..." /></Field>
-            <Field label="Full Page Description" sub="Shown on the /work/slug page (overrides Full Content if set)"><textarea rows={4} className={inputCls + ' resize-none'} value={f.full_description} onChange={e => set('full_description', e.target.value)} placeholder="Detailed description for the project page..." /></Field>
-            <Field label="Results / Outcome" sub="Shown below description on project page"><textarea rows={2} className={inputCls + ' resize-none'} value={f.results} onChange={e => set('results', e.target.value)} placeholder="2M+ views, 300% ROAS, 50K new followers..." /></Field>
-            <Field label="Services Provided" sub="Comma-separated list"><input className={inputCls} value={f.services_provided} onChange={e => set('services_provided', e.target.value)} placeholder="Video Editing, Color Grading, Motion Graphics" /></Field>
-            <Field label="Gradient CSS"><input className={inputCls} value={f.gradient} onChange={e => set('gradient', e.target.value)} placeholder="linear-gradient(135deg, #111, #222)" /></Field>
+            <Field label="Short Description" id="proj-desc" sub="For the carousel card"><textarea id="proj-desc" rows={2} className={inputCls + ' resize-none'} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
+            <Field label="Full Content" id="proj-full" sub="For the dedicated project page"><textarea id="proj-full" rows={6} className={inputCls + ' resize-none'} value={f.full_content || ''} onChange={e => set('full_content', e.target.value)} placeholder="Detailed project breakdown..." /></Field>
+            <Field label="Full Page Description" id="proj-full-desc" sub="Shown on the /work/slug page (overrides Full Content if set)"><textarea id="proj-full-desc" rows={4} className={inputCls + ' resize-none'} value={f.full_description} onChange={e => set('full_description', e.target.value)} placeholder="Detailed description for the project page..." /></Field>
+            <Field label="Results / Outcome" id="proj-results" sub="Shown below description on project page"><textarea id="proj-results" rows={2} className={inputCls + ' resize-none'} value={f.results} onChange={e => set('results', e.target.value)} placeholder="2M+ views, 300% ROAS, 50K new followers..." /></Field>
+            <Field label="Services Provided" id="proj-services" sub="Comma-separated list"><input id="proj-services" className={inputCls} value={f.services_provided} onChange={e => set('services_provided', e.target.value)} placeholder="Video Editing, Color Grading, Motion Graphics" /></Field>
+            <Field label="Gradient CSS" id="proj-grad"><input id="proj-grad" className={inputCls} value={f.gradient} onChange={e => set('gradient', e.target.value)} placeholder="linear-gradient(135deg, #111, #222)" /></Field>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Sort Order" id="proj-sort"><input id="proj-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
             <div className="flex gap-6">
-                <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" /><span className="font-body text-[14px] dark:text-white text-gray-900">Active</span></label>
-                <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={f.is_cta} onChange={e => set('is_cta', e.target.checked)} className="accent-accent w-4 h-4" /><span className="font-body text-[14px] dark:text-white text-gray-900">Is CTA card</span></label>
+                <label htmlFor="proj-active" className="flex items-center gap-2 cursor-pointer">
+                    <input id="proj-active" type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+                    <span className="font-body text-[14px] dark:text-white text-gray-900">Active</span>
+                </label>
+                <label htmlFor="proj-cta" className="flex items-center gap-2 cursor-pointer">
+                    <input id="proj-cta" type="checkbox" checked={f.is_cta} onChange={e => set('is_cta', e.target.checked)} className="accent-accent w-4 h-4" />
+                    <span className="font-body text-[14px] dark:text-white text-gray-900">Is CTA card</span>
+                </label>
             </div>
 
             {f.id ? (
@@ -2114,11 +2122,13 @@ function ProjectsTab({ showToast }) {
                                         onClick={() => handleMove(index, 'up')}
                                         disabled={index === 0}
                                         className="text-[10px] dark:text-[#555555] text-gray-400 dark:hover:text-white hover:text-gray-900 disabled:opacity-20 disabled:cursor-not-allowed leading-none px-1 py-0.5"
+                                        aria-label="Move project up"
                                     >▲</button>
                                     <button
                                         onClick={() => handleMove(index, 'down')}
                                         disabled={index === items.length - 1}
                                         className="text-[10px] dark:text-[#555555] text-gray-400 dark:hover:text-white hover:text-gray-900 disabled:opacity-20 disabled:cursor-not-allowed leading-none px-1 py-0.5"
+                                        aria-label="Move project down"
                                     >▼</button>
                                 </div>
                                 {item.is_cta && <span className="text-[11px] font-body font-semibold px-2 py-0.5 rounded border border-border dark:text-[#555555] text-gray-400">CTA</span>}
@@ -2142,12 +2152,12 @@ function TestimonialForm({ initial, onSave, onCancel, saving }) {
     const set = (k, v) => setF(prev => ({ ...prev, [k]: v }))
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
-            <Field label="Quote"><textarea rows={4} className={inputCls + ' resize-none'} value={f.quote} onChange={e => set('quote', e.target.value)} /></Field>
+            <Field label="Quote" id="test-quote"><textarea id="test-quote" rows={4} className={inputCls + ' resize-none'} value={f.quote} onChange={e => set('quote', e.target.value)} /></Field>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Author Name"><input className={inputCls} value={f.author_name} onChange={e => set('author_name', e.target.value)} /></Field>
-                <Field label="Author Initial"><input className={inputCls} value={f.author_initial} onChange={e => set('author_initial', e.target.value)} maxLength={2} /></Field>
+                <Field label="Author Name" id="test-name"><input id="test-name" className={inputCls} value={f.author_name} onChange={e => set('author_name', e.target.value)} /></Field>
+                <Field label="Author Initial" id="test-init"><input id="test-init" className={inputCls} value={f.author_initial} onChange={e => set('author_initial', e.target.value)} maxLength={2} /></Field>
             </div>
-            <Field label="Author Role"><input className={inputCls} value={f.author_role} onChange={e => set('author_role', e.target.value)} /></Field>
+            <Field label="Author Role" id="test-role"><input id="test-role" className={inputCls} value={f.author_role} onChange={e => set('author_role', e.target.value)} /></Field>
 
             {f.id ? (
                 <div className="pt-4 border-t border-[rgba(255,255,255,0.055)] mt-2">
@@ -2168,14 +2178,17 @@ function TestimonialForm({ initial, onSave, onCancel, saving }) {
             )}
 
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Stars (1–5)">
-                    <select className={inputCls} value={f.stars} onChange={e => set('stars', Number(e.target.value))}>
+                <Field label="Stars (1–5)" id="test-stars">
+                    <select id="test-stars" className={inputCls} value={f.stars} onChange={e => set('stars', Number(e.target.value))}>
                         {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
                     </select>
                 </Field>
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Sort Order" id="test-sort"><input id="test-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
-            <label className="flex items-center gap-2 cursor-pointer mt-2"><input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" /><span className="font-body text-[14px] dark:text-white text-gray-900">Active</span></label>
+            <label htmlFor="test-active" className="flex items-center gap-2 cursor-pointer mt-2">
+                <input id="test-active" type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+                <span className="font-body text-[14px] dark:text-white text-gray-900">Active</span>
+            </label>
             <div className="flex gap-3 mt-2">
                 <button onClick={() => onSave(f)} disabled={saving} className={btnPrimaryCls}>{saving ? 'Saving…' : 'Save'}</button>
                 <button onClick={onCancel} className={btnSecondaryCls}>Cancel</button>
@@ -2223,8 +2236,8 @@ function TestimonialsTab({ showToast }) {
         <div>
             {confirm && <ConfirmModal message="Delete this testimonial?" onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
             <div className={cardCls + ' mb-6 flex flex-col gap-4'}>
-                <Field label="Testimonials Section Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={testimonialsHeading || ''} onChange={e => setTestimonialsHeading(e.target.value)} />
+                <Field label="Testimonials Section Heading" id="test-h">
+                    <textarea id="test-h" rows={2} className={inputCls + ' resize-none'} value={testimonialsHeading || ''} onChange={e => setTestimonialsHeading(e.target.value)} />
                 </Field>
                 <button onClick={saveHeading} disabled={savingHeading} className={btnPrimaryCls + ' self-start'}>
                     {savingHeading ? 'Saving…' : 'Save Heading'}
@@ -2262,75 +2275,57 @@ function TestimonialsTab({ showToast }) {
 function ClientForm({ initial, onSave, onCancel, saving }) {
     const [f, setF] = useState(initial || {
         name: '', type: '', logo_url: '', logo_light_url: '', logo_dark_url: '',
-        use_same_logo: false, logo_bw_url: '', use_bw: false, sort_order: 0,
+        use_same_logo: false, sort_order: 0,
         is_active: true, is_cta: false
     })
     const set = (k, v) => setF(prev => ({ ...prev, [k]: v }))
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Name"><input className={inputCls} value={f.name} onChange={e => set('name', e.target.value)} /></Field>
-                <Field label="Type"><input className={inputCls} value={f.type} onChange={e => set('type', e.target.value)} placeholder="Brand, Agency, etc." /></Field>
+                <Field label="Name" id="client-name"><input id="client-name" className={inputCls} value={f.name} onChange={e => set('name', e.target.value)} /></Field>
+                <Field label="Type" id="client-type"><input id="client-type" className={inputCls} value={f.type} onChange={e => set('type', e.target.value)} placeholder="Brand, Agency, etc." /></Field>
             </div>
 
-            {f.id ? (
-                <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border mt-2">
-                        <MediaUpload
-                            label="Light Theme Logo"
-                            bucket="portfolio-media"
-                            path={`clients/${f.id}-logo-light.[ext]`}
-                            currentUrl={f.logo_light_url || f.logo_url}
-                            onSave={url => set('logo_light_url', url)}
-                            accept="image/*"
-                            previewShape="logo"
-                        />
-                        {!f.use_same_logo && (
-                            <MediaUpload
-                                label="Dark Theme Logo"
-                                bucket="portfolio-media"
-                                path={`clients/${f.id}-logo-dark.[ext]`}
-                                currentUrl={f.logo_dark_url}
-                                onSave={url => set('logo_dark_url', url)}
-                                accept="image/*"
-                                previewShape="logo"
-                            />
-                        )}
-                    </div>
-                    <label className="flex items-center gap-3 cursor-pointer mt-4 mb-4">
-                        <input type="checkbox" checked={f.use_same_logo} onChange={e => set('use_same_logo', e.target.checked)} className="accent-accent w-4 h-4" />
-                        <span className="font-body text-[14px] dark:text-white text-gray-900">Use same logo on both themes</span>
-                    </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border mt-2">
+                <MediaUpload
+                    label="Light Theme Logo"
+                    bucket="portfolio-media"
+                    path={`clients/${f.id || 'new'}-logo-light.[ext]`}
+                    currentUrl={f.logo_light_url || f.logo_url}
+                    onSave={url => set('logo_light_url', url)}
+                    accept="image/*"
+                    previewShape="logo"
+                />
+                {!f.use_same_logo && (
+                    <MediaUpload
+                        label="Dark Theme Logo"
+                        bucket="portfolio-media"
+                        path={`clients/${f.id || 'new'}-logo-dark.[ext]`}
+                        currentUrl={f.logo_dark_url}
+                        onSave={url => set('logo_dark_url', url)}
+                        accept="image/*"
+                        previewShape="logo"
+                    />
+                )}
+            </div>
+            <label htmlFor="client-use-same" className="flex items-center gap-3 cursor-pointer mt-4 mb-4">
+                <input id="client-use-same" type="checkbox" checked={f.use_same_logo} onChange={e => set('use_same_logo', e.target.checked)} className="accent-accent w-4 h-4" />
+                <span className="font-body text-[14px] dark:text-white text-gray-900">Use same logo on both themes</span>
+            </label>
 
-                    <div className="pt-4 border-t border-border mt-2">
-                        <MediaUpload
-                            label="Black & White Logo (optional)"
-                            sub="Used for a cleaner look on dark/light backgrounds"
-                            bucket="portfolio-media"
-                            path={`clients/${f.id}-logo-bw.[ext]`}
-                            currentUrl={f.logo_bw_url}
-                            onSave={url => set('logo_bw_url', url)}
-                            accept="image/*"
-                            previewShape="logo"
-                        />
-                        <label className="flex items-center gap-3 cursor-pointer mt-4">
-                            <input type="checkbox" checked={f.use_bw} onChange={e => set('use_bw', e.target.checked)} className="accent-accent w-4 h-4" />
-                            <span className="font-body text-[14px] dark:text-white text-gray-900">Use B&W version on site</span>
-                        </label>
-                    </div>
-                </>
-            ) : (
-                <div className="dark:bg-zinc-900 bg-white p-4 rounded-[8px] border border-border">
-                    <p className="text-[12px] dark:text-[#888] text-gray-400 font-body">Save this client first to upload a logo.</p>
-                </div>
-            )}
 
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Sort Order" id="client-sort"><input id="client-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
             <div className="flex gap-6">
-                <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" /><span className="font-body text-[14px] dark:text-white text-gray-900">Active</span></label>
-                <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={f.is_cta} onChange={e => set('is_cta', e.target.checked)} className="accent-accent w-4 h-4" /><span className="font-body text-[14px] dark:text-white text-gray-900">Is CTA</span></label>
+                <label htmlFor="client-active" className="flex items-center gap-2 cursor-pointer">
+                    <input id="client-active" type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+                    <span className="font-body text-[14px] dark:text-white text-gray-900">Active</span>
+                </label>
+                <label htmlFor="client-is-cta" className="flex items-center gap-2 cursor-pointer">
+                    <input id="client-is-cta" type="checkbox" checked={f.is_cta} onChange={e => set('is_cta', e.target.checked)} className="accent-accent w-4 h-4" />
+                    <span className="font-body text-[14px] dark:text-white text-gray-900">Is CTA</span>
+                </label>
             </div>
             <div className="flex gap-3 mt-2">
                 <button onClick={() => onSave(f)} disabled={saving} className={btnPrimaryCls}>{saving ? 'Saving…' : 'Save'}</button>
@@ -2367,10 +2362,35 @@ function ClientsTab({ showToast }) {
         logo_light_url: f.logo_light_url,
         logo_dark_url: f.use_same_logo ? f.logo_light_url : f.logo_dark_url,
         use_same_logo: f.use_same_logo,
-        logo_bw_url: f.logo_bw_url, use_bw: f.use_bw,
         sort_order: Number(f.sort_order), is_active: f.is_active, is_cta: f.is_cta
     })
-    const handleAdd = async (f) => { setSaving(true); await supabase.from('clients').insert([toDb(f)]); setSaving(false); setAdding(false); showToast('Client added!'); load() }
+    const handleAdd = async (f) => {
+        setSaving(true)
+        try {
+            const { data, error } = await supabase.from('clients').insert([toDb(f)]).select()
+            if (error) throw error
+
+            const newClient = data?.[0]
+            if (newClient) {
+                setItems(currentItems => {
+                    const updated = [...currentItems, newClient]
+                    return updated.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0))
+                })
+                setAdding(false)
+                showToast('Client added!')
+            } else {
+                // Fallback if no data returned
+                await load()
+                setAdding(false)
+                showToast('Client added!')
+            }
+        } catch (err) {
+            console.error('[Clients] Add error:', err)
+            showToast('Error: ' + err.message, 'error')
+        } finally {
+            setSaving(false)
+        }
+    }
     const handleEdit = async (f) => { setSaving(true); await supabase.from('clients').update(toDb(f)).eq('id', editId); setSaving(false); setEditId(null); showToast('Saved!'); load() }
     const handleDelete = async (id) => { await supabase.from('clients').delete().eq('id', id); setConfirm(null); showToast('Deleted!', 'error'); load() }
     const saveHeading = async () => {
@@ -2387,8 +2407,8 @@ function ClientsTab({ showToast }) {
         <div>
             {confirm && <ConfirmModal message="Delete this client?" onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
             <div className={cardCls + ' mb-6 flex flex-col gap-4'}>
-                <Field label="Marquee Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={marqueeHeading || ''} onChange={e => setMarqueeHeading(e.target.value)} />
+                <Field label="Marquee Heading" id="marq-h">
+                    <textarea id="marq-h" rows={2} className={inputCls + ' resize-none'} value={marqueeHeading || ''} onChange={e => setMarqueeHeading(e.target.value)} />
                 </Field>
                 <button onClick={saveHeading} disabled={savingHeading} className={btnPrimaryCls + ' self-start'}>
                     {savingHeading ? 'Saving…' : 'Save Heading'}
@@ -2405,7 +2425,7 @@ function ClientsTab({ showToast }) {
                         <div className="flex items-center justify-between px-5 py-4">
                             <div className="flex items-center gap-4">
                                 {item.logo_url
-                                    ? <img src={item.logo_url} alt={item.name} style={{ height: 32 }} className="object-contain" />
+                                    ? <img src={item.logo_url} alt={item.name} width={80} height={32} style={{ height: 32 }} className="object-contain" />
                                     : <div className="w-8 h-8 rounded-full dark:bg-zinc-800 bg-gray-100 flex items-center justify-center font-heading font-bold text-[14px] text-[#888888]">{item.name?.[0]}</div>
                                 }
                                 <div>
@@ -2495,7 +2515,9 @@ function LeadsTab({ showToast }) {
                                     <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body whitespace-nowrap">{lead.phone || '—'}</td>
                                     <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body whitespace-nowrap">{lead.project_type}</td>
                                     <td className="px-5 py-[14px]">
+                                        <label htmlFor={`lead-status-${lead.id}`} className="sr-only">Lead status</label>
                                         <select
+                                            id={`lead-status-${lead.id}`}
                                             value={lead.status}
                                             onChange={e => updateStatus(lead.id, e.target.value)}
                                             className="dark:bg-bg-4 bg-gray-50 border border-border rounded-[6px] px-2 py-1 text-[12px] font-body dark:text-white text-gray-900 focus:outline-none focus:border-accent transition-colors"
@@ -2552,10 +2574,12 @@ function MediaSettingsTab({ showToast }) {
                 <Field label="YouTube URL" sub="Paste a YouTube video link — will be embedded as an iframe (priority)">
                     <div className="flex gap-2">
                         <input
+                            id="showreel-yt"
                             className={inputCls + ' flex-1'}
                             value={settings.showreel_youtube_url || ''}
                             onChange={e => setSettings(prev => ({ ...prev, showreel_youtube_url: e.target.value }))}
                             placeholder="https://youtube.com/watch?v=..."
+                            aria-label="YouTube URL for showreel"
                         />
                         <button
                             onClick={() => saveSetting('showreel_youtube_url', settings.showreel_youtube_url || '')}
@@ -2566,10 +2590,12 @@ function MediaSettingsTab({ showToast }) {
                 <Field label="Google Drive URL" sub="Paste a Drive share link — used as fallback if no YouTube URL is set">
                     <div className="flex gap-2">
                         <input
+                            id="showreel-drive"
                             className={inputCls + ' flex-1'}
                             value={settings.showreel_drive_url || ''}
                             onChange={e => setSettings(prev => ({ ...prev, showreel_drive_url: e.target.value }))}
                             placeholder="https://drive.google.com/file/d/..."
+                            aria-label="Google Drive URL for showreel"
                         />
                         <button
                             onClick={() => saveSetting('showreel_drive_url', settings.showreel_drive_url || '')}
@@ -2647,12 +2673,12 @@ function ToolForm({ initial, onSave, onCancel, saving }) {
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Name"><input className={inputCls} value={f.name} onChange={e => set('name', e.target.value)} placeholder="Premiere Pro" /></Field>
-                <Field label="Category"><input className={inputCls} value={f.category} onChange={e => set('category', e.target.value)} placeholder="Video" /></Field>
+                <Field label="Name" id="tool-name"><input id="tool-name" className={inputCls} value={f.name} onChange={e => set('name', e.target.value)} placeholder="Premiere Pro" /></Field>
+                <Field label="Category" id="tool-cat"><input id="tool-cat" className={inputCls} value={f.category} onChange={e => set('category', e.target.value)} placeholder="Video" /></Field>
             </div>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Emoji (Fallback)"><input className={inputCls} value={f.emoji} onChange={e => set('emoji', e.target.value)} placeholder="🎬" /></Field>
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Emoji (Fallback)" id="tool-emoji"><input id="tool-emoji" className={inputCls} value={f.emoji} onChange={e => set('emoji', e.target.value)} placeholder="🎬" /></Field>
+                <Field label="Sort Order" id="tool-sort"><input id="tool-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
 
             <div className="pt-4 border-t border-[rgba(255,255,255,0.055)] mt-2 flex flex-col gap-2">
@@ -2668,8 +2694,8 @@ function ToolForm({ initial, onSave, onCancel, saving }) {
                 />
             </div>
 
-            <label className="flex items-center gap-3 cursor-pointer mt-2">
-                <input type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
+            <label htmlFor={`tool-active-${f.id || 'new'}`} className="flex items-center gap-3 cursor-pointer mt-2">
+                <input id={`tool-active-${f.id || 'new'}`} type="checkbox" checked={f.is_active} onChange={e => set('is_active', e.target.checked)} className="accent-accent w-4 h-4" />
                 <span className="font-body text-[14px] dark:text-white text-gray-900">Active</span>
             </label>
             <div className="flex gap-3 mt-2">
@@ -2749,8 +2775,8 @@ function ToolsTab({ showToast }) {
         <div>
             {confirm && <ConfirmModal message="Delete this tool?" onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
             <div className={cardCls + ' mb-6 flex flex-col gap-4'}>
-                <Field label="Tools Section Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={toolsHeading || ''} onChange={e => setToolsHeading(e.target.value)} />
+                <Field label="Tools Section Heading" id="tools-h">
+                    <textarea id="tools-h" rows={2} className={inputCls + ' resize-none'} value={toolsHeading || ''} onChange={e => setToolsHeading(e.target.value)} />
                 </Field>
                 <button onClick={saveHeading} disabled={savingHeading} className={btnPrimaryCls + ' self-start'}>
                     {savingHeading ? 'Saving…' : 'Save Heading'}
@@ -2768,10 +2794,10 @@ function ToolsTab({ showToast }) {
                     <div key={item.id} className="border-b border-border last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                         <div className="flex items-center justify-between px-5 py-[14px]">
                             <div className="flex items-center gap-4">
-                                <span className="dark:text-[#555555] text-gray-400 cursor-grab select-none">⋮⋮</span>
+                                <span className="dark:text-[#555555] text-gray-400 cursor-grab select-none" role="img" aria-label="Reorder handle">⋮⋮</span>
                                 <div className="w-[32px] h-[32px] flex items-center justify-center">
                                     {item.icon_url ? (
-                                        <img src={item.icon_url} alt={item.name} className="w-[28px] h-[28px] object-contain" />
+                                        <img src={item.icon_url} alt={item.name} width={28} height={28} className="w-[28px] h-[28px] object-contain" />
                                     ) : (
                                         <span className="text-[20px]">{item.emoji}</span>
                                     )}
@@ -2780,9 +2806,10 @@ function ToolsTab({ showToast }) {
                                 <span className="font-body text-[10px] uppercase tracking-wider dark:text-[#888] text-gray-500 dark:bg-bg-4 bg-gray-100 border border-border px-2 py-0.5 rounded-full">{item.category}</span>
                             </div>
                             <div className="flex items-center gap-4">
-                                <label className="flex items-center cursor-pointer">
-                                    <input type="checkbox" checked={item.is_active} onChange={() => toggleActive(item)} className="sr-only peer" />
-                                    <div className="w-[32px] h-[18px] dark:bg-[#222] bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-[14px] after:content-[''] after:absolute after:top-[2px] after:left-[2px] dark:after:bg-[#888] after:bg-white peer-checked:after:bg-black after:border-gray-300 after:rounded-full after:h-[14px] after:w-[14px] after:transition-all peer-checked:bg-accent shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] relative"></div>
+                                <label htmlFor={`tool-toggle-${item.id}`} className="relative inline-flex items-center cursor-pointer group">
+                                    <input id={`tool-toggle-${item.id}`} type="checkbox" checked={item.is_active} onChange={() => toggleActive(item)} className="sr-only peer" />
+                                    <span className="sr-only">Toggle tool active status</span>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-800 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"></div>
                                 </label>
                                 <button onClick={() => { setEditId(editId === item.id ? null : item.id); setAdding(false) }} className="text-[13px] font-body dark:text-[#888888] text-gray-500 dark:hover:text-text hover:text-gray-900 transition-colors">Edit</button>
                                 <button onClick={() => setConfirm(item.id)} className="text-[13px] font-body dark:text-[#555555] text-gray-400 hover:text-red-400 transition-colors">Delete</button>
@@ -2864,14 +2891,14 @@ function LinksSEOTab({ showToast }) {
                 <h3 className="font-body font-semibold dark:text-[#888] text-gray-400 uppercase tracking-widest text-[11px] mb-4">Social & Contact Links</h3>
                 <div className={cardCls + ' flex flex-col gap-6'}>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="Instagram URL"><input className={inputCls} value={settings.instagram_url || ''} onChange={e => setVal('instagram_url', e.target.value)} /></Field>
-                        <Field label="Contact Email"><input className={inputCls} value={settings.contact_email || ''} onChange={e => setVal('contact_email', e.target.value)} /></Field>
-                        <Field label="Behance URL"><input className={inputCls} value={settings.behance_url || ''} onChange={e => setVal('behance_url', e.target.value)} /></Field>
-                        <Field label="Dribbble URL"><input className={inputCls} value={settings.dribbble_url || ''} onChange={e => setVal('dribbble_url', e.target.value)} /></Field>
-                        <Field label="Agency Website URL"><input className={inputCls} value={settings.agency_url || ''} onChange={e => setVal('agency_url', e.target.value)} /></Field>
-                        <Field label="WhatsApp Number (e.g. 919724690118)"><input className={inputCls} value={settings.whatsapp_number || ''} onChange={e => setVal('whatsapp_number', e.target.value)} /></Field>
-                        <Field label="WhatsApp Default Message">
-                            <input className={inputCls} value={settings.whatsapp_message || ''} onChange={e => setVal('whatsapp_message', e.target.value)} placeholder="Hi Krish, I want to discuss a project." />
+                        <Field label="Instagram URL" id="seo-insta"><input id="seo-insta" className={inputCls} value={settings.instagram_url || ''} onChange={e => setVal('instagram_url', e.target.value)} /></Field>
+                        <Field label="Contact Email" id="seo-email"><input id="seo-email" className={inputCls} value={settings.contact_email || ''} onChange={e => setVal('contact_email', e.target.value)} /></Field>
+                        <Field label="Behance URL" id="seo-behance"><input id="seo-behance" className={inputCls} value={settings.behance_url || ''} onChange={e => setVal('behance_url', e.target.value)} /></Field>
+                        <Field label="Dribbble URL" id="seo-dribble"><input id="seo-dribble" className={inputCls} value={settings.dribbble_url || ''} onChange={e => setVal('dribbble_url', e.target.value)} /></Field>
+                        <Field label="Agency Website URL" id="seo-agency"><input id="seo-agency" className={inputCls} value={settings.agency_url || ''} onChange={e => setVal('agency_url', e.target.value)} /></Field>
+                        <Field label="WhatsApp Number" id="seo-wa-num"><input id="seo-wa-num" className={inputCls} value={settings.whatsapp_number || ''} onChange={e => setVal('whatsapp_number', e.target.value)} placeholder="e.g. 919724690118" /></Field>
+                        <Field label="WhatsApp Default Message" id="seo-wa-msg">
+                            <input id="seo-wa-msg" className={inputCls} value={settings.whatsapp_message || ''} onChange={e => setVal('whatsapp_message', e.target.value)} placeholder="Hi Krish, I want to discuss a project." />
                         </Field>
                     </div>
                     <button onClick={() => saveGroup(linkKeys, setSaving)} disabled={saving} className={btnPrimaryCls + ' self-start mt-2'}>
@@ -2883,11 +2910,11 @@ function LinksSEOTab({ showToast }) {
             <div>
                 <h3 className="font-body font-semibold dark:text-[#888] text-gray-400 uppercase tracking-widest text-[11px] mb-4">SEO</h3>
                 <div className={cardCls + ' flex flex-col gap-6'}>
-                    <Field label={`Meta Title (${(settings.meta_title || '').length}/60)`}>
-                        <input className={inputCls} maxLength={60} value={settings.meta_title || ''} onChange={e => setVal('meta_title', e.target.value)} />
+                    <Field label={`Meta Title (${(settings.meta_title || '').length}/60)`} id="seo-meta-title">
+                        <input id="seo-meta-title" className={inputCls} maxLength={60} value={settings.meta_title || ''} onChange={e => setVal('meta_title', e.target.value)} />
                     </Field>
-                    <Field label={`Meta Description (${(settings.meta_description || '').length}/160)`}>
-                        <textarea rows={3} className={inputCls + ' resize-none'} maxLength={160} value={settings.meta_description || ''} onChange={e => setVal('meta_description', e.target.value)} />
+                    <Field label={`Meta Description (${(settings.meta_description || '').length}/160)`} id="seo-meta-desc">
+                        <textarea id="seo-meta-desc" rows={3} className={inputCls + ' resize-none'} maxLength={160} value={settings.meta_description || ''} onChange={e => setVal('meta_description', e.target.value)} />
                     </Field>
                     <button onClick={() => saveGroup(seoKeys, setSavingSeo)} disabled={savingSeo} className={btnPrimaryCls + ' self-start mt-2'}>
                         {savingSeo ? 'Saving...' : 'Save SEO'}
@@ -2899,8 +2926,8 @@ function LinksSEOTab({ showToast }) {
                 <h3 className="font-body font-semibold text-red-500/80 uppercase tracking-widest text-[11px] mb-4">Admin Password</h3>
                 <div className={cardCls + ' flex flex-col gap-6'}>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="New Password"><input type="password" className={inputCls} value={passwords.newPass} onChange={e => setPasswords(p => ({ ...p, newPass: e.target.value }))} /></Field>
-                        <Field label="Confirm Password"><input type="password" className={inputCls} value={passwords.confirmPass} onChange={e => setPasswords(p => ({ ...p, confirmPass: e.target.value }))} /></Field>
+                        <Field label="New Password" id="pass-new"><input id="pass-new" type="password" className={inputCls} value={passwords.newPass} onChange={e => setPasswords(p => ({ ...p, newPass: e.target.value }))} /></Field>
+                        <Field label="Confirm Password" id="pass-conf"><input id="pass-conf" type="password" className={inputCls} value={passwords.confirmPass} onChange={e => setPasswords(p => ({ ...p, confirmPass: e.target.value }))} /></Field>
                     </div>
                     <button onClick={handlePasswordUpdate} disabled={savingPass} className="self-start mt-2 px-6 h-10 border border-red-500/40 text-red-400 font-heading font-bold text-[13px] rounded-[8px] hover:bg-red-500/10 transition-colors disabled:opacity-60">
                         {savingPass ? 'Updating...' : 'Update Password'}
@@ -2927,11 +2954,11 @@ function ProcessForm({ initial, onSave, onCancel, saving }) {
     return (
         <div className={cardCls + ' flex flex-col gap-6 mt-3'}>
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Step Number"><input className={inputCls} value={f.step_number} onChange={e => set('step_number', e.target.value)} placeholder="01" /></Field>
-                <Field label="Sort Order"><input type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+                <Field label="Step Number" id="proc-step"><input id="proc-step" className={inputCls} value={f.step_number} onChange={e => set('step_number', e.target.value)} placeholder="01" /></Field>
+                <Field label="Sort Order" id="proc-sort"><input id="proc-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
-            <Field label="Title"><input className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} /></Field>
-            <Field label="Description"><textarea rows={3} className={inputCls} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
+            <Field label="Title" id="proc-title"><input id="proc-title" className={inputCls} value={f.title} onChange={e => set('title', e.target.value)} /></Field>
+            <Field label="Description" id="proc-desc"><textarea id="proc-desc" rows={3} className={inputCls} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
             <MediaUpload
                 label="Icon (Dark Theme)"
                 sub="Used when the site is in dark mode."
@@ -3013,17 +3040,17 @@ function NavbarTab({ showToast }) {
             <h2 className="font-heading font-bold text-[22px] dark:text-white text-gray-900">Navbar Settings</h2>
             <div className={cardCls + ' flex flex-col gap-8'}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <Field label="Brand/Logo Text">
-                        <input className={inputCls} value={form.nav_logo_text} onChange={e => setForm(p => ({ ...p, nav_logo_text: e.target.value }))} placeholder="Krish." />
+                    <Field label="Brand/Logo Text" id="nav-logo">
+                        <input id="nav-logo" className={inputCls} value={form.nav_logo_text} onChange={e => setForm(p => ({ ...p, nav_logo_text: e.target.value }))} placeholder="Krish." />
                     </Field>
-                    <Field label="Availability Status Text">
-                        <input className={inputCls} value={form.nav_status_text} onChange={e => setForm(p => ({ ...p, nav_status_text: e.target.value }))} placeholder="Available for work" />
+                    <Field label="Availability Status Text" id="nav-status">
+                        <input id="nav-status" className={inputCls} value={form.nav_status_text} onChange={e => setForm(p => ({ ...p, nav_status_text: e.target.value }))} placeholder="Available for work" />
                     </Field>
-                    <Field label="Desktop Button Text">
-                        <input className={inputCls} value={form.nav_cta_text} onChange={e => setForm(p => ({ ...p, nav_cta_text: e.target.value }))} placeholder="Contact" />
+                    <Field label="Desktop Button Text" id="nav-cta-d">
+                        <input id="nav-cta-d" className={inputCls} value={form.nav_cta_text} onChange={e => setForm(p => ({ ...p, nav_cta_text: e.target.value }))} placeholder="Contact" />
                     </Field>
-                    <Field label="Mobile Button Text">
-                        <input className={inputCls} value={form.nav_cta_text_mobile} onChange={e => setForm(p => ({ ...p, nav_cta_text_mobile: e.target.value }))} placeholder="Let's Talk" />
+                    <Field label="Mobile Button Text" id="nav-cta-m">
+                        <input id="nav-cta-m" className={inputCls} value={form.nav_cta_text_mobile} onChange={e => setForm(p => ({ ...p, nav_cta_text_mobile: e.target.value }))} placeholder="Let's Talk" />
                     </Field>
                     <MediaUpload
                         label="Navbar Icon"
@@ -3160,8 +3187,8 @@ function ProcessTab({ showToast }) {
         <div>
             {confirm && <ConfirmModal message="Delete this step?" onConfirm={() => handleDelete(confirm)} onCancel={() => setConfirm(null)} />}
             <div className={cardCls + ' mb-6 flex flex-col gap-4'}>
-                <Field label="Process Section Heading">
-                    <textarea rows={2} className={inputCls + ' resize-none'} value={processHeading || ''} onChange={e => setProcessHeading(e.target.value)} />
+                <Field label="Process Section Heading" id="proc-h">
+                    <textarea id="proc-h" rows={2} className={inputCls + ' resize-none'} value={processHeading || ''} onChange={e => setProcessHeading(e.target.value)} />
                 </Field>
                 <button onClick={saveHeading} disabled={savingHeading} className={btnPrimaryCls + ' self-start'}>
                     {savingHeading ? 'Saving…' : 'Save Heading'}

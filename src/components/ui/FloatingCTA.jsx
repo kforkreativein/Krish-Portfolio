@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSiteContent } from '../../hooks/useContent';
 
 const FloatingCTA = ({ onOpenModal, settings }) => {
     const [isVisible, setIsVisible] = useState(false);
     const location = useLocation();
+    const { data: siteContent } = useSiteContent();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -30,7 +32,7 @@ const FloatingCTA = ({ onOpenModal, settings }) => {
                 >
                     <span className="font-extrabold tracking-tight">
                         {/* Connected to Backend 'FLOATING CTA TEXT' */}
-                        {settings?.floating_cta_text || "Let's Talk"}
+                        {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                     </span>
                 </motion.button>
             )}

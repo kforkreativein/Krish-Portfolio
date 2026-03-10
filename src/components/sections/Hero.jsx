@@ -78,9 +78,13 @@ const HeroPhotoCard = ({ imageUrl, cardName, cardBadge, cardLocation }) => (
         <div className="relative overflow-hidden bg-bg" style={{ aspectRatio: '9/16', borderRadius: '16px 16px 0 0' }}>
             {imageUrl ? (
                 <img
-                    src={imageUrl}
+                    src={`${imageUrl}?width=800&quality=80&format=webp`}
                     alt="Krish Chhatrala"
+                    width={280}
+                    height={498}
                     className="absolute inset-0 w-full h-full object-cover"
+                    loading="eager"
+                    fetchpriority="high"
                 />
             ) : (
                 <div
@@ -167,17 +171,41 @@ const Hero = ({ onOpenModal, siteContent, settings: settingsProp }) => {
                     <motion.div variants={fadeUp} custom={{ delay: 0.25 }} className="flex flex-col gap-4 w-full md:w-auto">
                         <div className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-[10px] md:gap-4 w-full md:w-auto">
                             <Button onClick={onOpenModal} className="w-full md:w-auto justify-center px-2 py-1 text-[10px] md:px-7 md:py-3.5 md:text-base font-extrabold" style={{ minHeight: 26 }}>
-                                {settings?.floating_cta_text || "Let's Talk"}
+                                {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                             </Button>
                             <Button variant="ghost" href="#work" className="w-full md:w-auto justify-center px-2 py-1 text-[10px] md:px-7 md:py-3.5 md:text-base" style={{ minHeight: 26 }}>
                                 {siteContent?.hero_secondary_cta || 'View My Work'}
                             </Button>
                         </div>
-                    </motion.div>
 
-                    <div className="w-full flex justify-center md:justify-start">
-                        {heroLoading ? <HeroStatsSkeleton /> : <HeroStats heroData={heroData} />}
-                    </div>
+                        {/* Redesigned Hero Bottom Stats - Relocated & Parsed */}
+                        {siteContent?.hero_bottom_stats && (
+                            <div className="mt-2 md:mt-4 flex flex-wrap items-center justify-center md:justify-start gap-6 md:gap-10">
+                                {siteContent.hero_bottom_stats.split('•').map((segment, i) => {
+                                    const trimmed = segment.trim();
+                                    const firstSpace = trimmed.indexOf(' ');
+                                    const value = firstSpace !== -1 ? trimmed.substring(0, firstSpace) : trimmed;
+                                    const label = firstSpace !== -1 ? trimmed.substring(firstSpace + 1) : '';
+
+                                    return (
+                                        <div key={i} className="flex flex-col items-start gap-0">
+                                            <span
+                                                className="text-xl md:text-2xl font-heading font-extrabold tracking-tighter"
+                                                style={{
+                                                    color: 'var(--accent)',
+                                                    fontFamily: "'Syne', 'Space Grotesk', sans-serif",
+                                                    fontStretch: 'expanded'
+                                                }}
+                                            >
+                                                {value}
+                                            </span>
+                                            <span className="text-[9px] md:text-[10px] font-semibold uppercase tracking-widest text-text-muted">{label}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </motion.div>
                 </div>
 
                 {/* Right: photo card — shows stacked below on mobile, side by side on md+ */}

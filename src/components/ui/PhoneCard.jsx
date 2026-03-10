@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { Volume2, VolumeX, ExternalLink, Play, Pause } from 'lucide-react'
 
-export default function PhoneCard({ project, isActive, onActivate, idx }) {
+export default function PhoneCard({ project, isActive, onActivate, idx, onOpenModal, settings, siteContent }) {
     const videoRef = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isMuted, setIsMuted] = useState(true)
@@ -103,20 +103,36 @@ export default function PhoneCard({ project, isActive, onActivate, idx }) {
                         muted={isMuted}
                         playsInline
                         onTimeUpdate={handleTimeUpdate}
-                    />
+                    >
+                        <track kind="captions" />
+                    </video>
                 ) : hasThumb ? (
                     <img
                         src={project.thumbnail_url}
                         alt={project.title}
+                        width={350}
+                        height={622}
                         className="w-full h-full object-cover"
                     />
                 ) : (
                     <div
-                        className="w-full h-full flex flex-col items-center justify-center p-6 text-center"
+                        className="w-full h-full flex flex-col items-center justify-center p-8 text-center"
                         style={{ background: project.gradient || 'var(--bg-3)' }}
                     >
-                        <span className="text-6xl mb-4 block drop-shadow-lg">{project.emoji || '🎬'}</span>
-                        <span className="font-heading font-bold text-white/90 text-lg drop-shadow-md">{project.title}</span>
+                        <span className="text-7xl mb-6 block drop-shadow-lg">{project.emoji || '🎬'}</span>
+                        <h4 className="font-heading font-extrabold text-white text-2xl mb-4 drop-shadow-md leading-tight">{project.title}</h4>
+                        <p className="font-body text-white/70 text-sm mb-8 leading-relaxed">{project.description}</p>
+                        {project.isCTA && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenModal();
+                                }}
+                                className="px-8 py-3 bg-white text-black font-heading font-extrabold text-sm rounded-full transform transition-transform hover:scale-105 active:scale-95 shadow-xl"
+                            >
+                                {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -132,6 +148,7 @@ export default function PhoneCard({ project, isActive, onActivate, idx }) {
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="absolute top-4 right-4 bg-black/60 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-accent hover:text-black transition-all shadow-lg pointer-events-auto"
+                        aria-label="View on Instagram"
                     >
                         <ExternalLink size={16} />
                     </a>
@@ -143,6 +160,7 @@ export default function PhoneCard({ project, isActive, onActivate, idx }) {
                         <button
                             onClick={togglePlay}
                             className="text-white hover:text-accent transition-colors"
+                            aria-label={isPlaying ? "Pause video" : "Play video"}
                         >
                             {isPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
                         </button>
@@ -155,11 +173,13 @@ export default function PhoneCard({ project, isActive, onActivate, idx }) {
                             onChange={handleSeek}
                             onClick={(e) => e.stopPropagation()}
                             className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-accent"
+                            aria-label="Project video progress"
                         />
 
                         <button
                             onClick={toggleMute}
                             className="text-white hover:text-accent transition-colors"
+                            aria-label={isMuted ? "Unmute video" : "Mute video"}
                         >
                             {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                         </button>

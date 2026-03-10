@@ -130,7 +130,7 @@ function Portfolio({ onOpenModal }) {
       case 'work':
       case 'projects':
       case 'portfolio':
-        return <Work key={key} onOpenModal={onOpenModal} settings={settings} />
+        return <Work key={key} onOpenModal={onOpenModal} settings={settings} siteContent={siteContent} />
       case 'showreel':
         return <Showreel key={key} siteContent={siteContent} />
       case 'process':

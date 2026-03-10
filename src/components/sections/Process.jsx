@@ -36,7 +36,7 @@ const ProcessCard = ({ number, title, description, iconLightUrl, iconDarkUrl, is
                     `}
                 >
                     {iconSrc ? (
-                        <img src={iconSrc} alt={`${title} icon`} className="w-6 h-6 object-contain" />
+                        <img src={iconSrc} alt={`${title} icon`} width={24} height={24} className="w-6 h-6 object-contain" />
                     ) : (
                         <span className="w-2 h-2 rounded-full bg-accent" />
                     )}
