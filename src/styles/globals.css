@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties (Theme Variables) ──────────────────────────────── */
+
+:root {
+  /* Backgrounds (Light Mode Defaults) */
+  --bg: #FAFAFA;
+  --bg-2: #F0F0F0;
+  --bg-3: #E5E5E5;
+  --bg-4: #DCDCD6;
+
+  /* Text */
+  --text: #0a0a0a;
+  --text-muted: #4B5563;
+  --text-dim: #6b6b6b;
+  --text-subtle: rgba(17, 17, 17, 0.6);
+  --text-ultra-dim: rgba(17, 17, 17, 0.2);
+  --text-secondary: #4B5563;
+
+  /* Borders */
+  --border: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  /* Accent (Blue for light mode) */
+  --accent-color: #0A68FF;
+  --accent-primary: var(--accent-color);
+  --accent: var(--accent-primary);
+  --accent-dim: rgba(10, 104, 255, 0.08);
+  --accent-border: rgba(10, 104, 255, 0.25);
+
+  /* Button Text */
+  --btn-colored-text: #FFFFFF;
+  --btn-normal-text: #000000;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --surface: #FFFFFF;
+}
+
+.dark {
+  /* Backgrounds (Dark Mode Overrides) */
+  --bg: #080808;
+  --bg-2: #0c0c0c;
+  --bg-3: #131313;
+  --bg-4: #1a1a1a;
+
+  /* Text */
+  --text: #ede9e3;
+  --text-muted: #A1A1AA;
+  --text-dim: #666666;
+  --text-subtle: rgba(237, 233, 227, 0.6);
+  --text-ultra-dim: rgba(237, 233, 227, 0.2);
+  --text-secondary: #A1A1AA;
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.055);
+  --border-strong: rgba(255, 255, 255, 0.10);
+
+  /* Accent (Green for dark mode) */
+  --accent-color: #CCFF00;
+  --accent-primary: var(--accent-color);
+  --accent: var(--accent-primary);
+  --accent-dim: rgba(204, 255, 0, 0.07);
+  --accent-border: rgba(204, 255, 0, 0.16);
+
+  /* Button Text */
+  --btn-colored-text: #000000;
+  --btn-normal-text: #FFFFFF;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --surface: #131313;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  cursor: none;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 0px;
+  /* This kills the thick horizontal scrollbar globally */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.03;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+
+@keyframes glowPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+.glow-pulse {
+  animation: glowPulse 7s ease-in-out infinite;
+}
+
+/* ─── Glass Components ───────────────────────────────────────────────────────── */
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+  }
+
+  .glass-strong {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-strong);
+  }
+}
+
+/* ─── Grain Overlay ─────────────────────────────────────────────────────────── */
+
+.grain-overlay {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.012;
+  /* Lower for light mode */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(1) infinite;
+}
+
+.dark .grain-overlay {
+  opacity: 0.018;
+  /* Higher for dark mode */
+}
+
+/* ─── Logo Image Filter (auto adapts logos to dark/light theme) ───────────── */
+
+.logo-img {
+  filter: brightness(0);
+  /* Black in light mode */
+}
+
+.dark .logo-img {
+  filter: brightness(0) invert(1);
+  /* White in dark mode */
+}
+
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0)
+  }
+
+  10% {
+    transform: translate(-2%, -3%)
+  }
+
+  20% {
+    transform: translate(3%, 2%)
+  }
+
+  30% {
+    transform: translate(-1%, 4%)
+  }
+
+  40% {
+    transform: translate(4%, -1%)
+  }
+
+  50% {
+    transform: translate(-3%, 3%)
+  }
+
+  60% {
+    transform: translate(2%, -4%)
+  }
+
+  70% {
+    transform: translate(-4%, 2%)
+  }
+
+  80% {
+    transform: translate(3%, -2%)
+  }
+
+  90% {
+    transform: translate(-2%, 4%)
+  }
+}
+
+/* ─── Marquee ─────────────────────────────────────────────────────────────── */
+
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Admin Cursor Overrides ─────────────────────────────────────────────── */
+
+/* Force the cursor to be visible on all Admin pages */
+.admin-dashboard,
+[class*="admin"] {
+  cursor: auto !important;
+}
+
+/* Ensure buttons always show the hand icon */
+.admin-dashboard button,
+.admin-dashboard a,
+[class*="admin"] button {
+  cursor: pointer !important;
+}
+
+/* Ensure text inputs always show the text bar */
+.admin-dashboard input,
+.admin-dashboard textarea {
+  cursor: text !important;
+}
+
+/* ─── Mobile / Touch Cursor Fix ──────────────────────────────────────────── */
+/* AND logic: only real touch devices (hover:none AND pointer:coarse)         */
+/* Desktop browser devtools simulate mobile but don't match both conditions   */
+
+@media (hover: none) and (pointer: coarse) {
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* ─── UI/UX Pre-Delivery: Hover Transitions ──────────────────────────────── */
+/* Smooth card hover transition for glassmorphism cards                        */
+
+.glass,
+.glass-strong {
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+/* Light mode accent is blue #0A68FF (set in :root above)                     */
+/* Dark mode accent is green #CCFF00 (set in .dark above)                     */
+/* Button primary: text-white in light, text-black in dark (see Button.jsx)   */
+
+/* ─── Focus Ring — visible for keyboard nav ──────────────────────────────── */
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
