@@ -196,7 +196,7 @@ export default function VideoPlayer({
 
                 {/* Caption overlay */}
                 {showCaption && (reel?.title || reel?.caption) && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-200">
                         {reel.title && <p className="font-heading font-bold text-[13px] text-white leading-tight">{reel.title}</p>}
                         {reel.caption && <p className="font-body text-[11px] text-white/80 mt-1 leading-snug line-clamp-2">{reel.caption}</p>}
                     </div>
@@ -209,7 +209,7 @@ export default function VideoPlayer({
     if (videoSrc) {
         return (
             <div
-                className="w-full h-full relative bg-black"
+                className="w-full h-full relative bg-black group"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
@@ -246,7 +246,7 @@ export default function VideoPlayer({
 
                 {/* Caption overlay */}
                 {showCaption && (reel?.title || reel?.caption) && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-200">
                         {reel.title && <p className="font-heading font-bold text-[13px] text-white leading-tight">{reel.title}</p>}
                         {reel.caption && <p className="font-body text-[11px] text-white/80 mt-1 leading-snug line-clamp-2">{reel.caption}</p>}
                     </div>

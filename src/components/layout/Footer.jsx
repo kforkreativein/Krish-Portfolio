@@ -81,13 +81,17 @@ export default function Footer({ onOpenModal, siteContent }) {
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Mail className="w-3 h-3" /> EMAIL -
           </div>
-          <a href={`mailto:${siteContent?.contact_email || siteContent?.email || ''}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>{siteContent?.contact_email || siteContent?.email || 'kforkreativein@gmail.com'}</a>
+          <a href="mailto:kforkreativein@gmail.com" className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
+            kforkreativein@gmail.com
+          </a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-center justify-center gap-3">
           <div className="flex items-center md:items-start lg:items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Phone className="w-3 h-3" /> CALL TODAY -
           </div>
-          <a href={`https://wa.me/${(siteContent?.contact_phone || '').replace(/\D/g, '') || ''}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>{siteContent?.contact_phone || '+919724690118'}</a>
+          <a href="tel:+919724690118" className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
+            +919724690118
+          </a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-end gap-3 md:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold"><Share2 className="w-3 h-3" /> SOCIAL :</div>
@@ -124,7 +128,7 @@ export default function Footer({ onOpenModal, siteContent }) {
       {/* SECTION 3 — Hero name + SECTION 4, 5, 6 */}
       <div style={{
         backgroundColor: v.bgWhite,
-        paddingTop: '16px',
+        paddingTop: '30px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -192,40 +196,34 @@ export default function Footer({ onOpenModal, siteContent }) {
           </div>
 
           {/* SECTION 6 — Icon row */}
-          <div className="flex justify-center items-center gap-4 mt-2">
-            {socialLinks.map((social, i) => {
-              const SocialIcon = getSocialIconByName(social.icon)
+          <div className="flex flex-col items-center mt-2">
+            <div className="flex justify-center items-center gap-4 mb-[30px]">
+              {socialLinks.map((social, i) => {
+                const SocialIcon = getSocialIconByName(social.icon)
 
-              return (
-                <a
-                  key={i}
-                  href={social.url || social.link || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
-                  style={{ border: `1px solid ${v.iconBorder}`, backgroundColor: v.iconBg }}
-                  aria-label={`Follow on ${social.icon}`}
-                >
-                  <SocialIcon className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-gray-200" />
-                </a>
-              )
-            })}
+                return (
+                  <a
+                    key={i}
+                    href={social.url || social.link || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
+                    style={{ border: `1px solid ${v.iconBorder}`, backgroundColor: v.iconBg }}
+                    aria-label={`Follow on ${social.icon}`}
+                  >
+                    <SocialIcon className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-gray-200" />
+                  </a>
+                )
+              })}
+            </div>
+
+            {/* SECTION 7 — Centered Bottom nav */}
+            <div className="flex items-center gap-2 mb-[60px]">
+              <a href="#" style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888', textDecoration: 'none' }}>HOME</a>
+              <span style={{ color: '#888888', fontSize: '10px' }}>•</span>
+              <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888' }}>CREATED BY KRISH</span>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* SECTION 7 — Bottom nav */}
-      <div
-        className="px-9 pt-3 pb-10 md:pb-12 flex items-center justify-between flex-wrap gap-5"
-        style={{
-          backgroundColor: v.bgWhite,
-        }}
-      >
-        <div style={{ flex: 1, minWidth: '120px' }}>
-          <a href="#" style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888', textDecoration: 'none' }}>HOME</a>
-        </div>
-        <div style={{ flex: 1, textAlign: 'right', minWidth: '120px' }}>
-          <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888' }}>CREATED BY KRISH</span>
         </div>
       </div>
 
