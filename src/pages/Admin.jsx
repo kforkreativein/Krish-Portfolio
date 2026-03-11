@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase, uploadFile } from '../lib/supabase'
-import { LayoutDashboard, Sparkles, Briefcase, Workflow, MessageSquareQuote, Users, Wrench, Film, Rocket, Settings2, UserRound, FolderKanban, Mail, SlidersVertical, ChevronUp, ChevronDown, Link2, Eye, EyeOff, PanelBottom, Layout, Menu } from 'lucide-react'
+import { LayoutDashboard, Sparkles, Briefcase, Workflow, MessageSquareQuote, Users, Wrench, Film, Rocket, Settings2, UserRound, FolderKanban, Mail, SlidersVertical, ChevronUp, ChevronDown, Link2, Eye, EyeOff, PanelBottom, Layout, Menu, ExternalLink } from 'lucide-react'
 import { SOCIAL_ICON_OPTIONS, getSocialIconByName } from '../constants/socialIcons'
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
@@ -356,6 +356,19 @@ function Sidebar({ active, onNav, onLogout, isOpen, onClose }) {
                         )
                     })}
                 </nav>
+                <div className="px-4 pb-4">
+                    <a
+                        href="https://krishchhatrala.live"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-zinc-900/90 dark:bg-zinc-900 shadow-md border border-lime-400/30 hover:border-lime-400/80 hover:shadow-[0_0_15px_rgba(163,230,53,0.15)] transition-all duration-300 ease-in-out"
+                    >
+                        <span className="text-[13px] font-body font-semibold text-gray-300 group-hover:text-white transition-colors">
+                            View Live Site
+                        </span>
+                        <ExternalLink size={16} className="text-lime-400 opacity-70 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                </div>
                 <div className="px-5 py-5 border-t border-border">
                     <button
                         onClick={onLogout}
