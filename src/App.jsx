@@ -190,12 +190,14 @@ function App() {
 
   useEffect(() => {
     if (!globalSiteContent?.favicon_url) return
-    let link = document.querySelector("link[rel='icon']")
+    let link = document.querySelector("link[rel*='icon']")
     if (!link) {
       link = document.createElement('link')
       link.rel = 'icon'
       document.head.appendChild(link)
     }
+    link.rel = 'icon'
+    link.type = 'image/png'
     link.href = globalSiteContent.favicon_url
   }, [globalSiteContent?.favicon_url])
 

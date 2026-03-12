@@ -27,6 +27,37 @@ export default function VideoPlayer({
     const [iframeReady, setIframeReady] = useState(false)
     const [localMuted, setLocalMuted] = useState(forceMuted)
     const [isIntersecting, setIsIntersecting] = useState(false)
+    const [actionIcon, setActionIcon] = useState(null) // 'play', 'pause', 'mute', 'unmute'
+
+    const triggerActionIcon = (iconStr) => {
+        setActionIcon(iconStr)
+        setTimeout(() => setActionIcon(null), 600)
+    }
+
+    const handleLeftTap = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        if (videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play().catch(()=>{})
+                triggerActionIcon('play')
+            } else {
+                videoRef.current.pause()
+                triggerActionIcon('pause')
+            }
+        }
+    }
+
+    const handleRightTap = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        setLocalMuted(m => {
+            const newMute = !m;
+            triggerActionIcon(newMute ? 'mute' : 'unmute');
+            if (videoRef.current) videoRef.current.muted = newMute;
+            return newMute;
+        })
+    }
 
     const ytId = reel?.youtube_url ? getYouTubeId(reel.youtube_url) : null
     const isYouTube = !!ytId
@@ -219,15 +250,42 @@ export default function VideoPlayer({
                     poster={thumbnail || undefined}
                     className="w-full h-full object-cover work-video"
                     loop
+                    muted={localMuted}
                     playsInline
+                    webkit-playsinline="true"
                     autoPlay={isActive}
                     disablePictureInPicture
-                    controls={hovered}
                     controlsList="nodownload nofullscreen"
                     preload="metadata"
                 >
                     <track kind="captions" />
                 </video>
+
+                {/* Invisible Interaction Overlays */}
+                <div 
+                    className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-pointer"
+                    onClick={handleLeftTap}
+                    aria-label="Toggle Play/Pause"
+                />
+                <div 
+                    className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-pointer"
+                    onClick={handleRightTap}
+                    aria-label="Toggle Mute/Unmute"
+                />
+
+                {/* Transient Action Icon */}
+                <div 
+                    className={`absolute inset-0 flex items-center justify-center z-30 pointer-events-none transition-opacity duration-300 ${actionIcon ? 'opacity-100' : 'opacity-0'}`}
+                >
+                    {actionIcon && (
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-lg">
+                            {actionIcon === 'play' && <Play size={28} className="fill-white ml-1" />}
+                            {actionIcon === 'pause' && <Pause size={28} className="fill-white" />}
+                            {actionIcon === 'mute' && <VolumeX size={28} />}
+                            {actionIcon === 'unmute' && <Volume2 size={28} />}
+                        </div>
+                    )}
+                </div>
 
                 {/* Instagram / external link — visible on hover */}
                 {hovered && instagramUrl && (

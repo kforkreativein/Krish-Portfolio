@@ -326,11 +326,14 @@ function Sidebar({ active, onNav, onLogout, isOpen, onClose }) {
                     onClick={onClose}
                 />
             )}
-            <aside className={`fixed left-0 top-0 h-screen w-[220px] dark:bg-bg-4 bg-white border-r border-border flex flex-col z-40 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+            <aside className={`fixed left-0 top-0 h-screen w-[220px] dark:bg-bg-4 bg-white border-r border-border flex flex-col z-50 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <div className="px-5 py-6 border-b border-border flex items-center justify-between">
-                    <span className="font-heading font-bold text-[22px] dark:text-white text-gray-900">
+                    <button 
+                        onClick={() => { onNav('Dashboard'); onClose(); }}
+                        className="font-heading font-bold text-[22px] dark:text-white text-gray-900 text-left hover:opacity-80 transition-opacity"
+                    >
                         Krish<span className="text-accent">.</span>
-                    </span>
+                    </button>
                     <button
                         onClick={onClose}
                         className="md:hidden w-[32px] h-[32px] flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white"
@@ -357,17 +360,20 @@ function Sidebar({ active, onNav, onLogout, isOpen, onClose }) {
                     })}
                 </nav>
                 <div className="px-4 pb-4">
-                    <a
-                        href="https://krishchhatrala.live"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-zinc-900/90 dark:bg-zinc-900 shadow-md border border-lime-400/30 hover:border-lime-400/80 hover:shadow-[0_0_15px_rgba(163,230,53,0.15)] transition-all duration-300 ease-in-out"
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open('https://www.krishchhatrala.live', '_blank', 'noopener,noreferrer');
+                        }}
+                        className="group w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-zinc-900/90 dark:bg-zinc-900 shadow-md border border-lime-400/30 hover:border-lime-400/80 hover:shadow-[0_0_15px_rgba(163,230,53,0.15)] transition-all duration-300 ease-in-out cursor-pointer"
                     >
                         <span className="text-[13px] font-body font-semibold text-gray-300 group-hover:text-white transition-colors">
                             View Live Site
                         </span>
                         <ExternalLink size={16} className="text-lime-400 opacity-70 group-hover:opacity-100 transition-opacity" />
-                    </a>
+                    </button>
                 </div>
                 <div className="px-5 py-5 border-t border-border">
                     <button
@@ -3271,7 +3277,7 @@ function Admin() {
             {/* Hamburger — mobile only */}
             <button
                 onClick={() => setSidebarOpen(true)}
-                className="fixed top-4 left-4 z-50 md:hidden w-[44px] h-[44px] flex items-center justify-center dark:bg-zinc-900 bg-white border dark:border-border border-gray-200 rounded-[10px] shadow-sm"
+                className={`fixed top-4 left-4 z-40 md:hidden w-[44px] h-[44px] flex items-center justify-center dark:bg-zinc-900 bg-white border dark:border-border border-gray-200 rounded-[10px] shadow-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
             >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <line x1="3" y1="6" x2="21" y2="6" />
