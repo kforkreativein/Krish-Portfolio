@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react'
 import VideoPlayer from './VideoPlayer'
 
-export default function PhoneCard({ project, isActive, onActivate, idx, onOpenModal, settings, siteContent }) {
+export default function PhoneCard({ project, isActive, onActivate, onPreviewActivate, idx, onOpenModal, settings, siteContent }) {
     const handleCardClick = () => {
         if (onActivate && typeof idx === 'number') {
             onActivate(idx)
@@ -21,10 +21,15 @@ export default function PhoneCard({ project, isActive, onActivate, idx, onOpenMo
     return (
         <div
             onClick={handleCardClick}
-            className={`relative shrink-0 rounded-[32px] overflow-hidden cursor-pointer transition-all duration-500 group aspect-[9/16] bg-bg-3
+            onMouseEnter={() => {
+                if (onPreviewActivate && typeof idx === 'number') {
+                    onPreviewActivate(idx)
+                }
+            }}
+            className={`relative shrink-0 rounded-[32px] overflow-hidden cursor-pointer transition-all duration-500 group aspect-[9/16] bg-bg-3 flex-shrink-0
             ${isActive
-                    ? 'w-[280px] md:w-[320px] lg:w-[350px] scale-100 shadow-[0_0_40px_rgba(204,255,0,0.15)] border-2 border-accent z-10'
-                    : 'w-[280px] md:w-[320px] lg:w-[350px] scale-[0.9] border border-border opacity-40 hover:opacity-80 z-0'}`}
+                    ? 'w-[260px] sm:w-[280px] md:w-[320px] lg:w-[360px] scale-100 shadow-[0_0_40px_rgba(204,255,0,0.15)] border-2 border-accent z-10'
+                    : 'w-[260px] sm:w-[280px] md:w-[320px] lg:w-[360px] scale-[0.92] border border-border opacity-40 hover:opacity-80 z-0'}`}
         >
             {/* iPhone Hardware Notch */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[24px] bg-black rounded-b-[16px] z-30 flex items-center justify-center">

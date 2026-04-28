@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useSettings, useSiteContent } from '../hooks/useContent'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import PhoneCard from '../components/ui/PhoneCard'
@@ -8,6 +9,8 @@ import PhoneCard from '../components/ui/PhoneCard'
 export default function ProjectDetail() {
     const { slug } = useParams()
     const navigate = useNavigate()
+    const { data: settings } = useSettings()
+    const { data: siteContent } = useSiteContent()
     const [project, setProject] = useState(null)
     const [loading, setLoading] = useState(true)
     const [activeIndex, setActiveIndex] = useState(0);
@@ -82,7 +85,7 @@ export default function ProjectDetail() {
 
     return (
         <div className="bg-bg min-h-screen text-text font-body">
-            <Navbar />
+            <Navbar siteContent={siteContent} />
 
             <main className="pt-32 pb-20">
                 <div className="max-w-[1200px] mx-auto px-5 md:px-8">
@@ -164,7 +167,7 @@ export default function ProjectDetail() {
                 </div>
             </main>
 
-            <Footer />
+            <Footer siteContent={siteContent} settings={settings} />
         </div>
     )
 }

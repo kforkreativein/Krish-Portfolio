@@ -1110,19 +1110,6 @@ function GlobalUITab({ showToast }) {
                 </div>
 
                 <div className="pt-6 border-t border-border flex flex-col gap-4">
-                    <p className="font-heading font-semibold text-[16px] dark:text-white text-gray-900">Favicon</p>
-                    <MediaUpload
-                        label="Favicon"
-                        bucket="images"
-                        path="site/favicon.[ext]"
-                        currentUrl={form?.favicon_url || ''}
-                        onSave={url => setForm(prev => ({ ...prev, favicon_url: url }))}
-                        accept="image/png,image/x-icon,image/svg+xml,image/*"
-                        previewShape="logo"
-                    />
-                </div>
-
-                <div className="pt-6 border-t border-border flex flex-col gap-4">
                     <p className="font-heading font-semibold text-[16px] dark:text-white text-gray-900">Floating CTA</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Field label="CTA Button Text" id="float-cta-txt"><input id="float-cta-txt" className={inputCls} value={form?.floating_cta_text || ''} onChange={e => setForm(prev => ({ ...prev, floating_cta_text: e.target.value }))} /></Field>
@@ -1570,7 +1557,6 @@ function ServicesTab({ showToast }) {
     const toDbForm = (f) => ({
         number: f.number, title: f.title, description: f.description, image_url: f.image_url,
         tags: f.tags ? f.tags.split(',').map(s => s.trim()).filter(Boolean) : [],
-        bullet_points: Array.isArray(f.bullet_points) ? f.bullet_points : [],
         sort_order: Number(f.sort_order), is_active: f.is_active
     })
 
@@ -1582,24 +1568,29 @@ function ServicesTab({ showToast }) {
 
     const handleAdd = async (f) => {
         setSaving(true)
-        await supabase.from('services').insert([toDbForm(f)])
-        setSaving(false); setAdding(false); showToast('Service added!'); load()
+        const { error } = await supabase.from('services').insert([toDbForm(f)])
+        setSaving(false)
+        if (error) { showToast('Failed to add service: ' + error.message, 'error'); return }
+        setAdding(false); showToast('Service added!'); load()
     }
 
     const handleEdit = async (f) => {
         setSaving(true)
-        await supabase.from('services').update(toDbForm(f)).eq('id', editId)
-        setSaving(false); setEditId(null); showToast('Saved!'); load()
+        const { error } = await supabase.from('services').update(toDbForm(f)).eq('id', editId)
+        setSaving(false)
+        if (error) { showToast('Failed to save: ' + error.message, 'error'); return }
+        setEditId(null); showToast('Saved!'); load()
     }
 
     const handleDelete = async (id) => {
-        await supabase.from('services').delete().eq('id', id)
+        const { error } = await supabase.from('services').delete().eq('id', id)
+        if (error) { showToast('Delete failed: ' + error.message, 'error'); return }
         setConfirm(null); showToast('Deleted!', 'error'); load()
     }
 
     const toggleActive = async (item) => {
-        await supabase.from('services').update({ is_active: !item.is_active }).eq('id', item.id)
-        load()
+        const { error } = await supabase.from('services').update({ is_active: !item.is_active }).eq('id', item.id)
+        if (!error) load()
     }
 
     const saveHeading = async () => {
@@ -1657,6 +1648,23 @@ function ServicesTab({ showToast }) {
 }
 
 // ─── Projects Tab ─────────────────────────────────────────────────────────────
+// Helper function to convert Google Drive links to playable URLs
+function convertGoogleDriveLink(url) {
+    if (!url || !url.includes('drive.google.com')) return url
+    // Extract file ID from various Google Drive URL formats
+    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (match && match[1]) {
+        // Return preview URL that works better with video players
+        return `https://drive.google.com/uc?id=${match[1]}&export=preview`;
+    }
+    return url
+}
+
+// Check if URL is a Google Drive link
+function isGoogleDriveLink(url) {
+    return url && url.includes('drive.google.com')
+}
+
 function ReelForm({ initial, projectId, onSave, onCancel, saving }) {
     const [f, setF] = useState(initial || {
         title: '', caption: '', video_url: '', drive_url: '',
@@ -1718,18 +1726,28 @@ function ReelForm({ initial, projectId, onSave, onCancel, saving }) {
                 </div>
                 {/* Reel Preview — appears immediately after upload auto-fills the URL */}
                 {f.video_url && (
-                    <div className="mt-2 rounded-[8px] overflow-hidden border border-border bg-black aspect-[9/16] max-w-[120px]">
-                        <video
-                            key={f.video_url}
-                            src={f.video_url}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full h-full object-cover"
-                        >
-                            <track kind="captions" />
-                        </video>
+                    <div className="mt-2">
+                        {isGoogleDriveLink(f.video_url) ? (
+                            <div className="p-3 bg-yellow-400/10 border border-yellow-400/30 rounded-[8px] text-[12px] text-yellow-600 dark:text-yellow-400 font-body">
+                                <p className="font-semibold mb-1">⚠️ Google Drive Limitation</p>
+                                <p>Google Drive videos don't always play in browsers. For best results, <strong>upload the video directly</strong> using the "Upload Video" button, or use a YouTube/Vimeo link instead.</p>
+                            </div>
+                        ) : (
+                            <div className="rounded-[8px] overflow-hidden border border-border bg-black aspect-[9/16] max-w-[120px]">
+                                <video
+                                    key={f.video_url}
+                                    src={f.video_url}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    controls
+                                    className="w-full h-full object-cover"
+                                >
+                                    <track kind="captions" />
+                                </video>
+                            </div>
+                        )}
                     </div>
                 )}
             </Field>
@@ -1832,18 +1850,25 @@ function ReelsManager({ projectId }) {
                             <div className="flex items-center gap-3 min-w-0">
                                 {/* Inline video preview */}
                                 {reel.video_url ? (
-                                    <div className="shrink-0 w-[40px] h-[70px] rounded-[6px] overflow-hidden border border-border bg-black">
-                                        <video
-                                            src={reel.video_url}
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            className="w-full h-full object-cover"
-                                        >
-                                            <track kind="captions" />
-                                        </video>
-                                    </div>
+                                    isGoogleDriveLink(reel.video_url) ? (
+                                        <div className="shrink-0 w-[40px] h-[70px] rounded-[6px] border border-yellow-400/30 bg-yellow-400/5 flex items-center justify-center text-[10px] text-yellow-600 dark:text-yellow-400 font-semibold text-center p-1">
+                                            GDrive
+                                        </div>
+                                    ) : (
+                                        <div className="shrink-0 w-[40px] h-[70px] rounded-[6px] overflow-hidden border border-border bg-black">
+                                            <video
+                                                src={reel.video_url}
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                                controls
+                                                className="w-full h-full object-cover"
+                                            >
+                                                <track kind="captions" />
+                                            </video>
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="shrink-0 w-[40px] h-[70px] rounded-[6px] border border-dashed border-border dark:bg-zinc-800 bg-gray-100 flex items-center justify-center">
                                         <span className="text-[16px]">🎬</span>
@@ -1933,9 +1958,7 @@ function ProjectForm({ initial, onSave, onCancel, saving }) {
             <Field label="Short Description" id="proj-desc" sub="For the carousel card"><textarea id="proj-desc" rows={2} className={inputCls + ' resize-none'} value={f.description} onChange={e => set('description', e.target.value)} /></Field>
             <Field label="Full Content" id="proj-full" sub="For the dedicated project page"><textarea id="proj-full" rows={6} className={inputCls + ' resize-none'} value={f.full_content || ''} onChange={e => set('full_content', e.target.value)} placeholder="Detailed project breakdown..." /></Field>
             <Field label="Full Page Description" id="proj-full-desc" sub="Shown on the /work/slug page (overrides Full Content if set)"><textarea id="proj-full-desc" rows={4} className={inputCls + ' resize-none'} value={f.full_description} onChange={e => set('full_description', e.target.value)} placeholder="Detailed description for the project page..." /></Field>
-            <Field label="Results / Outcome" id="proj-results" sub="Shown below description on project page"><textarea id="proj-results" rows={2} className={inputCls + ' resize-none'} value={f.results} onChange={e => set('results', e.target.value)} placeholder="2M+ views, 300% ROAS, 50K new followers..." /></Field>
             <Field label="Services Provided" id="proj-services" sub="Comma-separated list"><input id="proj-services" className={inputCls} value={f.services_provided} onChange={e => set('services_provided', e.target.value)} placeholder="Video Editing, Color Grading, Motion Graphics" /></Field>
-            <Field label="Gradient CSS" id="proj-grad"><input id="proj-grad" className={inputCls} value={f.gradient} onChange={e => set('gradient', e.target.value)} placeholder="linear-gradient(135deg, #111, #222)" /></Field>
             <div className="grid grid-cols-2 gap-4">
                 <Field label="Sort Order" id="proj-sort"><input id="proj-sort" type="number" className={inputCls} value={f.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
             </div>
@@ -2058,7 +2081,7 @@ function ProjectsTab({ showToast }) {
         thumbnail_url: f.thumbnail_url || null,
         video_url: f.video_url || null,
         profile_url: f.profile_url || null,
-        featured_reel_id: f.featured_reel_id || null,
+        featured_reel_id: f.featured_reel_id ? String(f.featured_reel_id) : null,
         gallery_urls: f.gallery_urls || []
     })
     const handleAdd = async (f) => {
@@ -2365,14 +2388,31 @@ function ClientsTab({ showToast }) {
     const [confirm, setConfirm] = useState(null)
 
     const load = useCallback(async () => {
-        const [{ data }, content] = await Promise.all([
-            supabase.from('clients').select('*').order('sort_order', { ascending: true }),
-            loadSiteContentFields(['marquee_heading']),
-        ])
-        setItems(data || [])
-        setMarqueeHeading(content?.marquee_heading || '')
-        setLoading(false)
-    }, [])
+        setLoading(true)
+        try {
+            const { data, error } = await supabase
+                .from('clients')
+                .select('*')
+                .order('sort_order', { ascending: true })
+
+            if (error) throw error
+            setItems(data || [])
+        } catch (err) {
+            console.error('[ClientsTab] clients load error:', err)
+            showToast('Clients load failed: ' + err.message, 'error')
+            setItems([])
+        }
+
+        try {
+            const content = await loadSiteContentFields(['marquee_heading'])
+            setMarqueeHeading(content?.marquee_heading || '')
+        } catch (err) {
+            console.error('[ClientsTab] heading load error:', err)
+            setMarqueeHeading('')
+        } finally {
+            setLoading(false)
+        }
+    }, [showToast])
     useEffect(() => { load() }, [load])
 
     const toDb = (f) => ({
@@ -2511,33 +2551,35 @@ function LeadsTab({ showToast }) {
                 </button>
             </div>
 
-            {leads.length === 0 ? (
-                <div className="dark:bg-bg-3 bg-white border border-border rounded-[16px] p-12 text-center shadow-sm">
-                    <p className="dark:text-[#555555] text-gray-500 font-body text-[15px]">No leads yet. Share your portfolio!</p>
-                </div>
-            ) : (
-                <div className="dark:bg-bg-3 bg-white border border-border rounded-[16px] overflow-auto shadow-sm">
-                    <table className="w-full min-w-[700px]">
-                        <thead>
-                            <tr className="border-b border-border">
-                                {['Date', 'Name', 'Email', 'Phone', 'Project Type', 'Status'].map(h => (
-                                    <th key={h} className="text-left px-5 py-3 text-[10px] uppercase tracking-[0.1em] dark:text-[#888888] text-gray-400 font-body font-semibold whitespace-nowrap">{h}</th>
-                                ))}
+            <div className="dark:bg-bg-3 bg-white border border-border rounded-[16px] overflow-auto shadow-sm">
+                <table className="w-full min-w-[700px]">
+                    <thead>
+                        <tr className="border-b border-border">
+                            {['Date', 'Name', 'Email', 'Phone', 'Project Type', 'Status'].map(h => (
+                                <th key={h} className="text-left px-5 py-3 text-[10px] uppercase tracking-[0.1em] dark:text-[#888888] text-gray-400 font-body font-semibold whitespace-nowrap">{h}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(leads || []).length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="px-5 py-12 text-center">
+                                    <p className="dark:text-[#555555] text-gray-500 font-body text-[15px]">No leads yet. Share your portfolio!</p>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {(leads || []).map(lead => (
+                        ) : (
+                            (leads || []).map(lead => (
                                 <tr key={lead.id} className={`border-b border-border last:border-0 ${lead.status === 'new' ? 'bg-accent/5' : 'hover:bg-gray-50 dark:hover:bg-white/5'} transition-colors`}>
                                     <td className="px-5 py-[14px] text-[13px] dark:text-[#555555] text-gray-400 font-body whitespace-nowrap">{new Date(lead.created_at).toLocaleDateString('en-IN')}</td>
                                     <td className="px-5 py-[14px] text-[14px] dark:text-white text-gray-900 font-body font-medium whitespace-nowrap">{lead.name}</td>
                                     <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body">{lead.email}</td>
                                     <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body whitespace-nowrap">{lead.phone || '—'}</td>
-                                    <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body whitespace-nowrap">{lead.project_type}</td>
+                                    <td className="px-5 py-[14px] text-[13px] dark:text-[#888888] text-gray-500 font-body whitespace-nowrap">{lead.project_type || '—'}</td>
                                     <td className="px-5 py-[14px]">
                                         <label htmlFor={`lead-status-${lead.id}`} className="sr-only">Lead status</label>
                                         <select
                                             id={`lead-status-${lead.id}`}
-                                            value={lead.status}
+                                            value={lead.status || 'new'}
                                             onChange={e => updateStatus(lead.id, e.target.value)}
                                             className="dark:bg-bg-4 bg-gray-50 border border-border rounded-[6px] px-2 py-1 text-[12px] font-body dark:text-white text-gray-900 focus:outline-none focus:border-accent transition-colors"
                                         >
@@ -2545,11 +2587,11 @@ function LeadsTab({ showToast }) {
                                         </select>
                                     </td>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }

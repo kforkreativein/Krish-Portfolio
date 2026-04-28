@@ -42,8 +42,8 @@ const useCursor = (dotRef, ringRef) => {
     }
 
     const loop = () => {
-      rx += (mouseX - rx) * 0.12
-      ry += (mouseY - ry) * 0.12
+      rx += (mouseX - rx) * 0.18
+      ry += (mouseY - ry) * 0.18
       ring.style.transform = `translate(${rx - 17}px, ${ry - 17}px)`
       rafId = requestAnimationFrame(loop)
     }

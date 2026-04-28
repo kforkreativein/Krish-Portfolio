@@ -86,14 +86,14 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
 
     if (loading) return (
         <>
-            <Navbar onOpenModal={onOpenModal} />
+            <Navbar onOpenModal={onOpenModal} siteContent={siteContent} />
             <LoadingSkeleton />
         </>
     )
 
     if (notFound) return (
         <>
-            <Navbar onOpenModal={onOpenModal} />
+            <Navbar onOpenModal={onOpenModal} siteContent={siteContent} />
             <NotFound onBack={() => navigate(-1)} />
         </>
     )
@@ -114,7 +114,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
 
     return (
         <div className="bg-bg min-h-screen text-text font-body">
-            <Navbar onOpenModal={onOpenModal} />
+            <Navbar onOpenModal={onOpenModal} siteContent={siteContent} />
 
             {/* Hero */}
             <section className="max-w-[1200px] mx-auto px-[var(--pad-side)]" style={{ paddingTop: 'var(--pad-project-t)', paddingBottom: 'var(--pad-project-b)' }}>
@@ -276,7 +276,7 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
                 </div>
             </section>
 
-            <Footer />
+            <Footer siteContent={siteContent} settings={settings} />
         </div>
     )
 }

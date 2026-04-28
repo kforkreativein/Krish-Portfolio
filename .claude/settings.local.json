@@ -2,7 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(npm run build)",
-      "Bash(node -e \":*)",
+      "Bash(node -e .*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(lsof -ti :5000)",
       "Bash(xargs kill -9)",
@@ -10,7 +10,13 @@
       "Bash(npm install dotenv)",
       "Bash(npm run seed)",
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"layout responsive\" --stack react)",
-      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"video editor portfolio dark glassmorphism react\" --design-system)"
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"video editor portfolio dark glassmorphism react\" --design-system)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "Bash(npm run *)",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_click"
     ]
   }
 }

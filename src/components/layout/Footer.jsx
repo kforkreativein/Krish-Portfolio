@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Mail, Phone, Share2 } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
+import { useSettings } from '../../hooks/useContent'
 import { getSocialIconByName } from '../../constants/socialIcons'
 
-export default function Footer({ onOpenModal, siteContent }) {
+export default function Footer({ onOpenModal, siteContent, settings: settingsProp }) {
   const { theme } = useTheme()
+  const { data: fetchedSettings } = useSettings()
+  const settings = settingsProp || fetchedSettings || {}
   const isDark = theme === 'dark'
 
   // Live Clock Logic
@@ -58,13 +61,24 @@ export default function Footer({ onOpenModal, siteContent }) {
     pillBorder: '#d5d5d5'
   }
 
+  const contactEmail = settings?.contact_email || siteContent?.contact_email || 'kforkreativein@gmail.com'
+  const phoneNumber = settings?.whatsapp_number || siteContent?.whatsapp_number || '919724690118'
+  const phoneHref = phoneNumber ? `tel:+${phoneNumber.replace(/[^\d]/g, '')}` : '#'
+  const displayPhone = phoneNumber ? `+${phoneNumber.replace(/[^\d]/g, '')}` : '+919724690118'
+  const fallbackSocialLinks = [
+    { icon: 'Instagram', url: settings?.instagram_url || 'https://www.instagram.com/kforkreative', link: settings?.instagram_url || 'https://www.instagram.com/kforkreative' },
+    { icon: 'Mail', url: `mailto:${contactEmail}`, link: `mailto:${contactEmail}` },
+    { icon: 'WhatsApp', url: `https://wa.me/${phoneNumber.replace(/[^\d]/g, '')}`, link: `https://wa.me/${phoneNumber.replace(/[^\d]/g, '')}` },
+  ].filter((social) => social.url && !social.url.endsWith('/'))
+
   const socialLinks = (siteContent?.dynamic_social_links && siteContent.dynamic_social_links.length > 0)
     ? siteContent.dynamic_social_links
-    : [
-      { icon: 'Instagram', url: 'https://www.instagram.com/kforkreative', link: 'https://www.instagram.com/kforkreative' },
-      { icon: 'Mail', url: 'mailto:kforkreativein@gmail.com', link: 'mailto:kforkreativein@gmail.com' },
-      { icon: 'MessageCircle', url: 'https://wa.me/919724690118', link: 'https://wa.me/919724690118' }
-    ]
+    : fallbackSocialLinks
+
+  const footerName = siteContent?.footer_big_text || 'Krish Chhatrala'
+  const [footerFirstName, ...footerRestParts] = footerName.trim().split(/\s+/)
+  const footerLastName = footerRestParts.join(' ') || 'Chhatrala'
+  const footerText = siteContent?.footer_text || 'CREATED BY KRISH'
 
   return (
     <footer style={{ width: '100%', fontFamily: '"Inter", sans-serif' }}>
@@ -81,16 +95,16 @@ export default function Footer({ onOpenModal, siteContent }) {
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Mail className="w-3 h-3" /> EMAIL -
           </div>
-          <a href="mailto:kforkreativein@gmail.com" className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
-            kforkreativein@gmail.com
+          <a href={`mailto:${contactEmail}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
+            {contactEmail}
           </a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-center justify-center gap-3">
           <div className="flex items-center md:items-start lg:items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Phone className="w-3 h-3" /> CALL TODAY -
           </div>
-          <a href="tel:+919724690118" className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
-            +919724690118
+          <a href={phoneHref} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
+            {displayPhone}
           </a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-end gap-3 md:col-span-2 lg:col-span-1">
@@ -120,9 +134,9 @@ export default function Footer({ onOpenModal, siteContent }) {
       <div style={{
         backgroundColor: v.bgGray,
         borderTop: `1px solid ${v.border}`,
-        padding: '10px 36px',
+        padding: '0 36px',
       }}>
-        <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '11px', fontWeight: 400, color: isDark ? '#a1a1aa' : '#666666' }}>© Copyright 2026. All Rights Reserved by Krish Chhatrala</span>
+        <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '11px', fontWeight: 400, color: isDark ? '#a1a1aa' : '#666666' }}>© Copyright 2026. All Rights Reserved by {footerName}</span>
       </div>
 
       {/* SECTION 3 — Hero name + SECTION 4, 5, 6 */}
@@ -150,7 +164,7 @@ export default function Footer({ onOpenModal, siteContent }) {
             textRendering: 'geometricPrecision',
             textAlign: 'center'
           }}>
-            Krish
+            {footerFirstName || 'Krish'}
           </span>
           <span className="-mt-4 md:-mt-8" style={{
             fontFamily: '"Syne", sans-serif',
@@ -164,7 +178,7 @@ export default function Footer({ onOpenModal, siteContent }) {
             textRendering: 'geometricPrecision',
             textAlign: 'center'
           }}>
-            Chhatrala
+            {footerLastName}
           </span>
         </div>
 
@@ -218,10 +232,10 @@ export default function Footer({ onOpenModal, siteContent }) {
             </div>
 
             {/* SECTION 7 — Centered Bottom nav */}
-            <div className="flex items-center gap-2 mb-[60px]">
+            <div className="flex items-center gap-2 mb-[50px]">
               <a href="#" style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888', textDecoration: 'none' }}>HOME</a>
               <span style={{ color: '#888888', fontSize: '10px' }}>•</span>
-              <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888' }}>CREATED BY KRISH</span>
+              <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888' }}>{footerText}</span>
             </div>
           </div>
         </div>

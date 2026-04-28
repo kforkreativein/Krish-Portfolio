@@ -15,7 +15,7 @@ export default function Cursor() {
     <>
       <div
         ref={dotRef}
-        className="pointer-events-none fixed left-0 top-0 h-2 w-2 rounded-full transition-[width,height] duration-200 ease-out"
+        className="pointer-events-none fixed left-0 top-0 h-2 w-2 rounded-full"
         style={{ zIndex: 2147483647, backgroundColor: 'var(--accent-color, var(--accent))' }}
       />
       <div

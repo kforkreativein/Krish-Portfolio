@@ -2,9 +2,14 @@
 
 -- Add new columns to existing projects table
 alter table projects add column if not exists slug text default null;
+alter table projects add column if not exists client_name text default null;
+alter table projects add column if not exists role text default null;
+alter table projects add column if not exists full_content text default null;
 alter table projects add column if not exists full_description text default null;
 alter table projects add column if not exists results text default null;
 alter table projects add column if not exists services_provided text[] default null;
+alter table projects add column if not exists featured_reel_id text default null;
+alter table projects add column if not exists gallery_urls text[] default '{}';
 
 -- Create project_reels table
 create table if not exists project_reels (

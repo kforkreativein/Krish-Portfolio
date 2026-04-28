@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { stagger, fadeUp } from '../../constants/animations'
 import SectionTitle from '../ui/SectionTitle'
@@ -28,13 +28,52 @@ const ServicesSkeleton = () => (
 )
 
 export default function Services({ siteContent }) {
+    const sectionRef = useRef(null)
     const [openIndex, setOpenIndex] = useState(0)
+    const [autoPlay, setAutoPlay] = useState(false)
+    const [isInView, setIsInView] = useState(false)
     const { data: servicesData, loading } = useServices()
+
+    // Detect when section enters/leaves viewport
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsInView(entry.isIntersecting)
+            },
+            { threshold: 0.3 } // Trigger when 30% of section is visible
+        )
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current)
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current)
+            }
+        }
+    }, [])
+
+    // Auto-cycle through services every 4 seconds (only when in view)
+    useEffect(() => {
+        if (!isInView || loading || !servicesData || servicesData.length === 0) return
+
+        const timer = setInterval(() => {
+            setOpenIndex((prevIndex) => (prevIndex + 1) % servicesData.length)
+        }, 4000)
+
+        return () => clearInterval(timer)
+    }, [isInView, loading, servicesData])
+
+    const handleServiceClick = (index) => {
+        setOpenIndex(index)
+        setAutoPlay(true) // Reset auto-play when manually clicking
+    }
 
     const headingLines = siteContent?.services_heading ? siteContent?.services_heading?.split('\n') : ["Services", "I Offer"]
 
     return (
-        <section id="services" className="bg-bg-2 px-[var(--pad-side)] relative overflow-hidden" style={{ paddingTop: 'var(--pad-services-t)', paddingBottom: 'var(--pad-services-b)' }}>
+        <section ref={sectionRef} id="services" className="bg-bg-2 px-[var(--pad-side)] relative overflow-hidden" style={{ paddingTop: 'var(--pad-services-t)', paddingBottom: 'var(--pad-services-b)' }}>
             {/* Radial Glow */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full z-0 pointer-events-none" style={{ background: 'radial-gradient(circle, var(--accent-dim), transparent 70%)', transform: 'translate(30%, -30%)' }} />
 
@@ -79,7 +118,7 @@ export default function Services({ siteContent }) {
                                         className="py-2"
                                     >
                                         <button
-                                            onClick={() => setOpenIndex(index)}
+                                            onClick={() => handleServiceClick(index)}
                                             className="w-full py-5 md:py-8 flex items-center justify-between group text-left min-h-[44px]"
                                         >
                                             <div className="flex items-center gap-6">

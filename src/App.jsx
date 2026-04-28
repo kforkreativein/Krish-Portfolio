@@ -176,7 +176,7 @@ function Portfolio({ onOpenModal }) {
           })}
       </main>
 
-      <Footer siteContent={siteContent} />
+      <Footer siteContent={siteContent} settings={settings} />
     </motion.div>
   )
 }

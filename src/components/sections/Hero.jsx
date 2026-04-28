@@ -67,6 +67,41 @@ const HeroStatsSkeleton = () => (
     </div>
 )
 
+const parseHeroBottomStats = (statsText = '') => {
+    const fallbackStats = [
+        { title: '25+', label: 'Clients' },
+        { title: '100+ Videos Delivered', label: '' },
+        { title: 'PAN India', label: '& International' },
+    ]
+
+    const segments = statsText
+        .split(/[•·]/)
+        .map(segment => segment.trim())
+        .filter(Boolean)
+
+    if (segments.length === 0) return fallbackStats
+
+    return segments.map((segment) => {
+        const normalized = segment.replace(/\s+/g, ' ').trim()
+
+        if (/pan india/i.test(normalized)) {
+            return { title: 'PAN India', label: normalized.replace(/pan india/i, '').replace(/^&\s*/i, '').trim() || '& International' }
+        }
+
+        const numberMatch = normalized.match(/^(\d+\+?)\s*(.*)$/)
+        if (!numberMatch) return { title: normalized, label: '' }
+
+        const [, value, rest = ''] = numberMatch
+        const labelText = rest.trim()
+
+        if (/videos?\s+delivered/i.test(labelText)) {
+            return { title: value, label: 'Videos Delivered' }
+        }
+
+        return { title: value, label: labelText }
+    })
+}
+
 const HeroPhotoCard = ({ imageUrl, cardName, cardBadge, cardLocation }) => (
     <motion.div
         initial={{ y: 40, opacity: 0 }}
@@ -180,29 +215,23 @@ const Hero = ({ onOpenModal, siteContent, settings: settingsProp }) => {
 
                         {/* Redesigned Hero Bottom Stats - Relocated & Parsed */}
                         {siteContent?.hero_bottom_stats && (
-                            <div className="mt-2 md:mt-4 flex flex-wrap items-center justify-center md:justify-start gap-6 md:gap-10">
-                                {siteContent.hero_bottom_stats.split('•').map((segment, i) => {
-                                    const trimmed = segment.trim();
-                                    const firstSpace = trimmed.indexOf(' ');
-                                    const value = firstSpace !== -1 ? trimmed.substring(0, firstSpace) : trimmed;
-                                    const label = firstSpace !== -1 ? trimmed.substring(firstSpace + 1) : '';
-
-                                    return (
-                                        <div key={i} className="flex flex-col items-start gap-0">
-                                            <span
-                                                className="text-xl md:text-2xl font-heading font-extrabold tracking-tighter"
-                                                style={{
-                                                    color: 'var(--accent)',
-                                                    fontFamily: "'Syne', 'Space Grotesk', sans-serif",
-                                                    fontStretch: 'expanded'
-                                                }}
-                                            >
-                                                {value}
-                                            </span>
-                                            <span className="text-[9px] md:text-[10px] font-semibold uppercase tracking-widest text-text-muted">{label}</span>
-                                        </div>
-                                    );
-                                })}
+                            <div className="mt-2 md:mt-4 flex flex-nowrap items-start justify-center md:justify-start gap-4 sm:gap-6 md:gap-10 w-full overflow-visible">
+                                {parseHeroBottomStats(siteContent.hero_bottom_stats).map((stat, i) => (
+                                    <div key={i} className="flex flex-col items-center md:items-start gap-0 text-center md:text-left">
+                                        <span
+                                            className="text-xl md:text-2xl font-heading font-extrabold tracking-tighter uppercase leading-none text-accent"
+                                            style={{
+                                                fontFamily: "'Syne', 'Space Grotesk', sans-serif",
+                                                fontStretch: 'expanded'
+                                            }}
+                                        >
+                                            {stat.title}
+                                        </span>
+                                        {stat.label && (
+                                            <span className="mt-1 text-[9px] md:text-[10px] font-semibold uppercase tracking-widest text-text-muted">{stat.label}</span>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </motion.div>

@@ -22,7 +22,6 @@ export default function ThemeToggle({ inline = false }) {
                 border: '1px solid var(--border-strong)',
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
-                cursor: 'pointer',
             }}
         >
             {/* Dark icon slot */}

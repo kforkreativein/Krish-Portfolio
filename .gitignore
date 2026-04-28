@@ -20,3 +20,29 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Supabase Setup (local database config)
+supabase-setup/
+
+# Local prompt/docs source files
+docs/
+Assets/
+Images/
+src/images/
+videos/
+src/videos/
+
+# Local images and uploads
+Images/
+src/images/
+Images/
+videos/
+src/videos/
+Assets/
+docs/
+
+# Local prompt inputs
+master-portfolio-prompt.md
+prompt.md
+portfolio_clients_data.md
+

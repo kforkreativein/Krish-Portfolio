@@ -251,6 +251,18 @@ html {
   }
 }
 
+/* ─── Force Custom Cursor on All Interactive Elements ────────────────────── */
+
+/* Keep custom cursor on buttons and interactive elements (except admin) */
+body:not(.admin-dashboard) button,
+body:not(.admin-dashboard) a,
+body:not(.admin-dashboard) [role="button"],
+body:not(.admin-dashboard) input[type="checkbox"],
+body:not(.admin-dashboard) input[type="radio"],
+body:not(.admin-dashboard) select {
+  cursor: none !important;
+}
+
 /* ─── Admin Cursor Overrides ─────────────────────────────────────────────── */
 
 /* Force the cursor to be visible on all Admin pages */

@@ -28,6 +28,7 @@ export default function VideoPlayer({
     const [localMuted, setLocalMuted] = useState(forceMuted)
     const [isIntersecting, setIsIntersecting] = useState(false)
     const [actionIcon, setActionIcon] = useState(null) // 'play', 'pause', 'mute', 'unmute'
+    const [isBuffering, setIsBuffering] = useState(false)
 
     const triggerActionIcon = (iconStr) => {
         setActionIcon(iconStr)
@@ -109,6 +110,37 @@ export default function VideoPlayer({
         return () => observer.disconnect()
     }, [isYouTube])
 
+    // Direct video: optimize loading and buffering
+    useEffect(() => {
+        if (isYouTube || !videoRef.current) return
+        const video = videoRef.current
+        
+        const handleCanPlay = () => {
+            setIsBuffering(false)
+        }
+        
+        const handleWaiting = () => {
+            setIsBuffering(true)
+        }
+        
+        const handleLoadedMetadata = () => {
+            // Ensure first frame is visible immediately
+            if (video.readyState >= 2) {
+                setIsBuffering(false)
+            }
+        }
+        
+        video.addEventListener('canplay', handleCanPlay)
+        video.addEventListener('waiting', handleWaiting)
+        video.addEventListener('loadedmetadata', handleLoadedMetadata)
+        
+        return () => {
+            video.removeEventListener('canplay', handleCanPlay)
+            video.removeEventListener('waiting', handleWaiting)
+            video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+        }
+    }, [isYouTube])
+
     const handleMouseEnter = () => {
         setHovered(true)
         if (isYouTube) {
@@ -118,14 +150,35 @@ export default function VideoPlayer({
             document.querySelectorAll('video').forEach(v => {
                 if (v !== videoRef.current) v.pause()
             })
-            // Force unmute then play; fall back to muted if browser policy blocks it
-            videoRef.current.muted = false
-            videoRef.current.play().catch((err) => {
-                if (err.name === 'NotAllowedError') {
-                    videoRef.current.muted = true
-                    videoRef.current.play().catch(() => { })
-                }
-            })
+            
+            const video = videoRef.current
+            // Ensure video is at start and ready
+            video.currentTime = 0
+            video.muted = false
+            
+            // Add buffering listeners temporarily
+            const handleWaiting = () => setIsBuffering(true)
+            const handleCanPlay = () => setIsBuffering(false)
+            
+            video.addEventListener('waiting', handleWaiting)
+            video.addEventListener('canplay', handleCanPlay)
+            
+            // Force play immediately; fall back to muted if browser blocks unmuted autoplay
+            const playPromise = video.play()
+            if (playPromise !== undefined) {
+                playPromise.catch((err) => {
+                    if (err.name === 'NotAllowedError') {
+                        video.muted = true
+                        video.play().catch(() => { })
+                    }
+                })
+            }
+            
+            // Cleanup listeners on next frame
+            setTimeout(() => {
+                video.removeEventListener('waiting', handleWaiting)
+                video.removeEventListener('canplay', handleCanPlay)
+            }, 100)
         }
     }
 
@@ -158,6 +211,7 @@ export default function VideoPlayer({
                             src={thumbnail}
                             alt={reel.title || 'YouTube video'}
                             className="w-full h-full object-cover"
+                            style={{ objectFit: 'cover', objectPosition: 'center' }}
                             loading="lazy"
                             onError={(e) => {
                                 if (e.target.src.includes('maxresdefault')) {
@@ -184,7 +238,6 @@ export default function VideoPlayer({
                             key={`yt-${ytId}-${localMuted}`}
                             src={embedUrl}
                             className="absolute inset-0 w-full h-full"
-                            style={{ transform: 'scale(1.35)', transformOrigin: 'center' }}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                             title="YouTube video"
@@ -249,6 +302,7 @@ export default function VideoPlayer({
                     src={videoSrc}
                     poster={thumbnail || undefined}
                     className="w-full h-full object-cover work-video"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
                     loop
                     muted={localMuted}
                     playsInline
@@ -256,7 +310,7 @@ export default function VideoPlayer({
                     autoPlay={isActive}
                     disablePictureInPicture
                     controlsList="nodownload nofullscreen"
-                    preload="metadata"
+                    preload="auto"
                 >
                     <track kind="captions" />
                 </video>
@@ -286,6 +340,13 @@ export default function VideoPlayer({
                         </div>
                     )}
                 </div>
+
+                {/* Buffering loader — visible while video is loading */}
+                {isBuffering && (
+                    <div className="absolute inset-0 flex items-center justify-center z-25 bg-black/30 backdrop-blur-sm pointer-events-none">
+                        <div className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full animate-spin" />
+                    </div>
+                )}
 
                 {/* Instagram / external link — visible on hover */}
                 {hovered && instagramUrl && (

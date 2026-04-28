@@ -1,0 +1,11 @@
+- generic [ref=e2]:
+  - button "Switch to light theme" [ref=e3]:
+    - generic [ref=e6]: 🌙
+    - generic [ref=e8]: ☀️
+  - generic [ref=e9]:
+    - generic [ref=e11]: Krish.
+    - generic [ref=e12]:
+      - generic [ref=e13]: Admin Password
+      - textbox "Admin Password" [active] [ref=e14]:
+        - /placeholder: Enter password
+      - button "Enter Dashboard" [ref=e15]

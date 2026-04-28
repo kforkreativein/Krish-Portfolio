@@ -68,21 +68,24 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                 // 3. Merge them safely
                 if (projs) {
                     const formattedData = projs.map(project => {
-                        const projectReels = (reels || []).filter(r => r.project_id === project.id)
+                        const projectReels = (reels || [])
+                            .filter(r => String(r.project_id) === String(project.id))
+                            .filter(r => r.is_active !== false)
                         projectReels.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
 
                         const featured = project.featured_reel_id
-                            ? projectReels.find(r => r.id === project.featured_reel_id)
-                            : projectReels[0]
+                            ? projectReels.find(r => String(r.id) === String(project.featured_reel_id))
+                            : projectReels.find(r => r.video_url || r.youtube_url || r.drive_url || r.thumbnail_url)
 
                         return {
                             ...project,
                             project_reels: projectReels,
                             video_url: featured?.video_url || project.video_url,
                             thumbnail_url: featured?.thumbnail_url || project.thumbnail_url,
-                            source_url: featured?.instagram_url || featured?.video_url || project.video_url,
+                            source_url: featured?.instagram_url || featured?.youtube_url || featured?.video_url || featured?.drive_url || project.video_url,
                             instagram_url: featured?.instagram_url || project.instagram_url,
                             youtube_url: featured?.youtube_url || project.youtube_url,
+                            drive_url: featured?.drive_url || project.drive_url,
                         }
                     })
                     setProjectsData(formattedData)
@@ -238,11 +241,20 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                             )}
                         </div>
 
-                        <div className="w-full lg:w-[60%] flex-col gap-6 flex" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
-                            <div ref={scrollRef} onScroll={handleScroll} className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-6 md:gap-8 pb-8 pt-4 px-5 md:px-8 lg:px-[52px] scroll-px-5 md:scroll-px-8 lg:scroll-px-[52px] no-scrollbar cursor-grab active:cursor-grabbing relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="w-full lg:w-[60%] flex-col gap-6 flex min-h-[620px] md:min-h-[700px] lg:min-h-[750px] justify-center" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
+                            <div ref={scrollRef} onScroll={handleScroll} className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-6 md:gap-8 pb-4 pt-6 px-4 md:px-6 lg:px-8 scroll-px-5 md:scroll-px-8 lg:scroll-px-[52px] no-scrollbar cursor-grab active:cursor-grabbing relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] justify-center lg:justify-start">
                                 {projectsData.map((project, idx) => (
                                     <div key={project.id || idx} className="flex flex-col items-center gap-6">
-                                        <PhoneCard project={project} idx={idx} isActive={activeIndex === idx} onActivate={scrollToIndex} onOpenModal={onOpenModal} settings={settings} siteContent={siteContent} />
+                                        <PhoneCard
+                                            project={project}
+                                            idx={idx}
+                                            isActive={isInView && activeIndex === idx}
+                                            onActivate={scrollToIndex}
+                                            onPreviewActivate={setActiveIndex}
+                                            onOpenModal={onOpenModal}
+                                            settings={settings}
+                                            siteContent={siteContent}
+                                        />
                                     </div>
                                 ))}
                             </div>
