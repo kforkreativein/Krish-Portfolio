@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "step_number": "01",
+    "title": "Discovery Call",
+    "description": "We talk about your brand, goals, and audience. No fluff — clarity first, execution second.",
+    "icon_light_url": "",
+    "icon_dark_url": "",
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "step_number": "02",
+    "title": "Strategy & Plan",
+    "description": "I build a custom content or editing strategy tailored to your platform, niche, and growth targets.",
+    "icon_light_url": "",
+    "icon_dark_url": "",
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "id": 3,
+    "step_number": "03",
+    "title": "Create & Execute",
+    "description": "High-quality content, edits, and AI systems — delivered on time with obsessive attention to detail.",
+    "icon_light_url": "",
+    "icon_dark_url": "",
+    "is_active": true,
+    "sort_order": 3
+  },
+  {
+    "id": 4,
+    "step_number": "04",
+    "title": "Review & Scale",
+    "description": "Track results, optimize from data, and scale what works. Growth is a system, not a one-time thing.",
+    "icon_light_url": "",
+    "icon_dark_url": "",
+    "is_active": true,
+    "sort_order": 4
+  }
+]

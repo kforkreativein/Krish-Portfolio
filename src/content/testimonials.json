@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "quote": "Krish completely transformed our social media. Instagram engagement went up 3x in two months. The AI avatar he built is like having a digital version of me available 24/7.",
+    "author_name": "Mehul Chhatrala",
+    "author_role": "Founder · Krish Computer",
+    "author_initial": "M",
+    "photo_url": "/uploads/testimonial-mehul-chhatrala.webp",
+    "stars": 5,
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "quote": "Finally someone who gets local business. Our salon reach doubled and we started getting real walk-ins from Instagram. Always on time with that extra creative touch.",
+    "author_name": "Hemali Kevalia",
+    "author_role": "Wellness Coach · Krish Wellness Center",
+    "author_initial": "H",
+    "photo_url": "/uploads/testimonial-hemali-kevalia.webp",
+    "stars": 5,
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "id": 3,
+    "quote": "Product posts are clear, captions are on point, and the Shopify site looks super professional. Sales have noticeably improved since working with Krish.",
+    "author_name": "Sparsh Salon Team",
+    "author_role": "Beauty Salon · Vadodara",
+    "author_initial": "S",
+    "photo_url": "",
+    "stars": 5,
+    "is_active": true,
+    "sort_order": 3
+  }
+]

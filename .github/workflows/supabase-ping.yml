@@ -1,8 +1,6 @@
-name: Ping Supabase to Keep Alive
+name: Ping Supabase to Keep Alive (DISABLED — app migrated to local JSON CMS)
 
 on:
-  schedule:
-    - cron: '0 9 * * 1,3,5'
   workflow_dispatch:
 
 jobs:
@@ -10,8 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Ping Supabase Database
-        run: |
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/users?limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Content-Type: application/json"
+      - name: No-op — Supabase no longer used
+        run: echo "This workflow is disabled. The app no longer uses Supabase."

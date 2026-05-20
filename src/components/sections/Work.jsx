@@ -4,14 +4,14 @@ import SectionTitle from '../ui/SectionTitle'
 import SectionLabel from '../ui/SectionLabel'
 import Button from '../ui/Button'
 import PhoneCard from '../ui/PhoneCard'
-import { supabase } from '../../lib/supabase'
+import { useProjects } from '../../hooks/useContent'
 
 export default function Work({ onOpenModal, settings, siteContent }) {
     const navigate = useNavigate()
-    const [projectsData, setProjectsData] = useState([])
-    const [loading, setLoading] = useState(true)
+    const { data: rawProjects, loading } = useProjects()
+    const projectsData = rawProjects || []
     const [activeIndex, setActiveIndex] = useState(0)
-    const [isPaused, setIsPaused] = useState(true)
+    const [isPaused, setIsPaused] = useState(false)
     const [isInView, setIsInView] = useState(false)
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
     const sectionRef = useRef(null)
@@ -43,60 +43,6 @@ export default function Work({ onOpenModal, settings, siteContent }) {
 
         if (sectionRef.current) observer.observe(sectionRef.current)
         return () => observer.disconnect()
-    }, [])
-
-    useEffect(() => {
-        async function fetchProjects() {
-            try {
-                setLoading(true)
-                // 1. Fetch projects independently
-                const { data: projs, error: pErr } = await supabase
-                    .from('projects')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('sort_order', { ascending: true })
-
-                if (pErr) throw pErr
-
-                // 2. Fetch reels independently to completely avoid the Supabase Join crash
-                const { data: reels, error: rErr } = await supabase
-                    .from('project_reels')
-                    .select('*')
-
-                if (rErr) throw rErr
-
-                // 3. Merge them safely
-                if (projs) {
-                    const formattedData = projs.map(project => {
-                        const projectReels = (reels || [])
-                            .filter(r => String(r.project_id) === String(project.id))
-                            .filter(r => r.is_active !== false)
-                        projectReels.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-
-                        const featured = project.featured_reel_id
-                            ? projectReels.find(r => String(r.id) === String(project.featured_reel_id))
-                            : projectReels.find(r => r.video_url || r.youtube_url || r.drive_url || r.thumbnail_url)
-
-                        return {
-                            ...project,
-                            project_reels: projectReels,
-                            video_url: featured?.video_url || project.video_url,
-                            thumbnail_url: featured?.thumbnail_url || project.thumbnail_url,
-                            source_url: featured?.instagram_url || featured?.youtube_url || featured?.video_url || featured?.drive_url || project.video_url,
-                            instagram_url: featured?.instagram_url || project.instagram_url,
-                            youtube_url: featured?.youtube_url || project.youtube_url,
-                            drive_url: featured?.drive_url || project.drive_url,
-                        }
-                    })
-                    setProjectsData(formattedData)
-                }
-            } catch (err) {
-                console.error("Error fetching projects:", err)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchProjects()
     }, [])
 
     const handleScroll = () => {
@@ -134,27 +80,33 @@ export default function Work({ onOpenModal, settings, siteContent }) {
         }
     }
 
-    // Run-once auto-scroll: 7s interval, hard stops at last slide forever.
+    // Auto-scroll: 7s per card, pauses on hover/touch, stops at last slide.
     useEffect(() => {
         let scrollTimer
+        let startDelay
 
-        if (isInView && !hasRunOnce.current && projectsData.length > 0) {
-            scrollTimer = setInterval(() => {
-                setActiveIndex(prevIndex => {
-                    if (prevIndex >= projectsData.length - 1) {
-                        hasRunOnce.current = true
-                        clearInterval(scrollTimer)
-                        return prevIndex
-                    }
-                    const next = prevIndex + 1
-                    scrollToIndex(next)
-                    return next
-                })
-            }, 7000)
+        if (isInView && !isPaused && !hasRunOnce.current && projectsData.length > 1) {
+            startDelay = setTimeout(() => {
+                scrollTimer = setInterval(() => {
+                    setActiveIndex(prevIndex => {
+                        if (prevIndex >= projectsData.length - 1) {
+                            hasRunOnce.current = true
+                            clearInterval(scrollTimer)
+                            return prevIndex
+                        }
+                        const next = prevIndex + 1
+                        scrollToIndex(next)
+                        return next
+                    })
+                }, 7000)
+            }, 1000)
         }
 
-        return () => clearInterval(scrollTimer)
-    }, [isInView, projectsData.length])
+        return () => {
+            clearTimeout(startDelay)
+            clearInterval(scrollTimer)
+        }
+    }, [isInView, isPaused, projectsData.length])
 
     // First-entry init: scroll to card 0 on first visit only.
     useEffect(() => {

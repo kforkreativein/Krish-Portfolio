@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "hero_badge": "Video Editor · AI Marketing Expert",
+    "hero_heading": "I Make Your Brand Impossible to Scroll Past with AI + Video",
+    "hero_heading_part1": "I Make Your Brand",
+    "hero_heading_part2": "Impossible to Scroll Past",
+    "hero_heading_part3": "with AI + Video",
+    "hero_subheading": "Cinematic edits, AI avatars, and content systems that turn scrollers into customers. PAN India & international.",
+    "hero_primary_cta": "Let's Talk",
+    "hero_secondary_cta": "View My Work",
+    "hero_bottom_stats": "25+ clients · 100+ videos delivered · PAN India & international",
+    "hero_card_name": "Krish Chhatrala",
+    "hero_card_badge": "OPEN TO PROJECTS",
+    "hero_card_location": "Vadodara, Gujarat 🇮🇳",
+    "diff_heading": "What Makes Me Different",
+    "diff_text": "Most editors deliver clips. I deliver scroll-stopping systems — built with AI, refined with taste, scaled with intent. Every frame is intentional. Every cut has a reason.",
+    "about_cta_text": "Browse My Work →",
+    "services_heading": "Services",
+    "projects_heading": "Selected Work",
+    "marquee_heading": "Trusted by ambitious brands",
+    "clients_heading": "Clients",
+    "process_heading": "My Process",
+    "tools_heading": "Tools & Stack",
+    "testimonials_heading": "What Clients Say",
+    "showreel_title": "Showreel",
+    "showreel_heading": "60 Seconds of Scroll-Stopping Work",
+    "showreel_subtext": "A curated cut of edits, motion, and AI campaigns from the last 12 months.",
+    "showreel_video_url": "",
+    "cta_heading": "Ready to Level Up Your Brand?",
+    "cta_subheading": "Let's build something your audience can't scroll past.",
+    "cta_description": "Let's build something your audience can't scroll past.",
+    "cta_pills": [
+      "Low Engagement?",
+      "No Content Strategy?",
+      "Videos Not Converting?",
+      "No Time to Edit?",
+      "Inconsistent Posting?",
+      "Need AI Automation?"
+    ],
+    "level_up_cta_text": "Let's Talk →",
+    "floating_cta_text": "Let's Talk",
+    "floating_cta_link": "#contact",
+    "nav_logo_text": "Krish",
+    "nav_icon_url": "/uploads/navbar.webp",
+    "nav_cta_text": "Let's Talk",
+    "nav_cta_text_mobile": "Talk",
+    "nav_status_text": "Open to projects",
+    "footer_text": "CREATED BY KRISH",
+    "footer_big_text": "Krish Chhatrala",
+    "favicon_url": "/uploads/favicon.webp",
+    "section_order": [
+      "hero",
+      "different",
+      "tools",
+      "marquee",
+      "services",
+      "work",
+      "showreel",
+      "process",
+      "testimonials",
+      "cta"
+    ],
+    "hidden_sections": [
+      "showreel"
+    ],
+    "dynamic_social_links": [
+      {
+        "id": 1,
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/kforkreative.in",
+        "icon": "Instagram"
+      },
+      {
+        "id": 2,
+        "platform": "Email",
+        "url": "mailto:kforkreativein@gmail.com",
+        "icon": "Mail"
+      },
+      {
+        "id": 3,
+        "platform": "WhatsApp",
+        "url": "https://wa.me/919724690118",
+        "icon": "WhatsApp"
+      }
+    ],
+    "theme_accent_light": "#0A68FF",
+    "theme_accent_dark": "#CCFF00",
+    "theme_bg_light": "#FAFAFA",
+    "theme_bg_dark": "#080808",
+    "theme_text_light": "#0A0A0A",
+    "theme_text_dark": "#EDE9E3",
+    "theme_secondary_text_light": "#4B5563",
+    "theme_secondary_text_dark": "#A1A1AA",
+    "theme_btn_filled_text_light": "#FFFFFF",
+    "theme_btn_filled_text_dark": "#000000",
+    "theme_btn_ghost_text_light": "#000000",
+    "theme_btn_ghost_text_dark": "#FFFFFF",
+    "updated_at": "2026-05-20T18:32:46.262Z"
+  }
+]

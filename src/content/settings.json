@@ -1,0 +1,13 @@
+[
+  { "id": 1, "key": "contact_email", "value": "kforkreativein@gmail.com" },
+  { "id": 2, "key": "whatsapp_number", "value": "919724690118" },
+  { "id": 3, "key": "whatsapp_message", "value": "Hi Krish, I want to discuss a project." },
+  { "id": 4, "key": "instagram_url", "value": "https://www.instagram.com/kforkreative.in" },
+  { "id": 5, "key": "behance_url", "value": "" },
+  { "id": 6, "key": "dribbble_url", "value": "" },
+  { "id": 7, "key": "agency_url", "value": "https://kforkreative.in" },
+  { "id": 8, "key": "meta_title", "value": "Krish Chhatrala — Video Editor & AI Marketing Expert" },
+  { "id": 9, "key": "meta_description", "value": "I make brands impossible to scroll past with cinematic edits, AI avatars, and content systems. PAN India & international." },
+  { "id": 10, "key": "hero_photo_url", "value": "/uploads/krish.jpeg" },
+  { "id": 11, "key": "different_photo_url", "value": "/uploads/about-section.webp" }
+]

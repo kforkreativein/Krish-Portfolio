@@ -94,15 +94,15 @@ export default function Services({ siteContent }) {
                 </motion.div>
 
                 {loading ? <ServicesSkeleton /> : (
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.1 }}
-                        variants={stagger}
-                        className="flex flex-col md:flex-row md:justify-between gap-8 md:gap-12 lg:gap-20 mt-[32px] md:mt-[52px]"
-                    >
+                    <div className="flex flex-col md:flex-row md:justify-between gap-8 md:gap-12 lg:gap-20 mt-[32px] md:mt-[52px]">
                         {/* Left Column: Accordion */}
-                        <div className="w-full md:w-[60%] lg:w-[60%] flex flex-col flex-1">
+                        <motion.div
+                            initial={{ opacity: 0, x: -48 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.1 }}
+                            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                            className="w-full md:w-[60%] lg:w-[60%] flex flex-col flex-1"
+                        >
                             {(servicesData || []).map((service, index) => {
                                 const isOpen = openIndex === index
                                 const points = service.bullet_points || service.bullets || []
@@ -114,7 +114,10 @@ export default function Services({ siteContent }) {
                                 return (
                                     <motion.div
                                         key={service.id || `${service?.number || index}-${service?.title || 'service'}`}
-                                        variants={fadeUp}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, amount: 0.3 }}
+                                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
                                         className="py-2"
                                     >
                                         <button
@@ -182,10 +185,16 @@ export default function Services({ siteContent }) {
                                     </motion.div>
                                 )
                             })}
-                        </div>
+                        </motion.div>
 
                         {/* Right Column: Sticky Visual Panel */}
-                        <div className="hidden md:block md:w-[35%] lg:w-[40%] shrink-0">
+                        <motion.div
+                            initial={{ opacity: 0, x: 48 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.1 }}
+                            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+                            className="hidden md:block md:w-[35%] lg:w-[40%] shrink-0"
+                        >
                             <div className="sticky top-32 w-full aspect-[4/5] md:aspect-auto md:h-[320px] lg:aspect-[4/5] lg:h-auto rounded-[24px] overflow-hidden shadow-2xl glass">
                                 <AnimatePresence mode="wait">
                                     <motion.div
@@ -215,8 +224,8 @@ export default function Services({ siteContent }) {
                                     </motion.div>
                                 </AnimatePresence>
                             </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
                 )}
             </div>
         </section>

@@ -1,4 +1,3 @@
-import { ExternalLink } from 'lucide-react'
 import VideoPlayer from './VideoPlayer'
 
 export default function PhoneCard({ project, isActive, onActivate, onPreviewActivate, idx, onOpenModal, settings, siteContent }) {
@@ -48,13 +47,14 @@ export default function PhoneCard({ project, isActive, onActivate, onPreviewActi
                         <span className="text-7xl mb-6 block drop-shadow-lg">{project.emoji || '🎬'}</span>
                         <h4 className="font-heading font-extrabold text-white text-2xl mb-4 drop-shadow-md leading-tight">{project.title}</h4>
                         <p className="font-body text-white/70 text-sm mb-8 leading-relaxed">{project.description}</p>
-                        {project.isCTA && (
+                        {(project.is_cta || project.isCTA) && (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onOpenModal();
                                 }}
-                                className="px-8 py-3 bg-white text-black font-heading font-extrabold text-sm rounded-full transform transition-transform hover:scale-105 active:scale-95 shadow-xl"
+                                className="px-8 py-3 bg-accent font-heading font-extrabold text-sm rounded-full transform transition-transform hover:scale-105 active:scale-95 shadow-xl"
+                                style={{ color: 'var(--bg)' }}
                             >
                                 {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                             </button>
@@ -63,19 +63,6 @@ export default function PhoneCard({ project, isActive, onActivate, onPreviewActi
                 )}
             </div>
 
-            {/* Instagram external link overlay */}
-            {project?.instagram_url && (
-                <a
-                    href={project.instagram_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute top-4 right-4 z-30 bg-black/60 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-accent hover:text-black transition-all shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
-                    aria-label="View on Instagram"
-                >
-                    <ExternalLink size={16} />
-                </a>
-            )}
         </div>
     )
 }

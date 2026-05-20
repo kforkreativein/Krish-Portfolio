@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase, uploadFile } from '../lib/supabase'
+import { Navigate } from 'react-router-dom'
+import { supabase, uploadFile } from '../lib/contentApi'
 import { LayoutDashboard, Sparkles, Briefcase, Workflow, MessageSquareQuote, Users, Wrench, Film, Rocket, Settings2, UserRound, FolderKanban, Mail, SlidersVertical, ChevronUp, ChevronDown, Link2, Eye, EyeOff, PanelBottom, Layout, Menu, ExternalLink } from 'lucide-react'
 import { SOCIAL_ICON_OPTIONS, getSocialIconByName } from '../constants/socialIcons'
 
@@ -239,16 +240,32 @@ function AuthGate({ onAuth }) {
     const [password, setPassword] = useState('')
     const [error, setError] = useState(false)
     const [shake, setShake] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
-            sessionStorage.setItem('admin_auth', 'true')
-            onAuth()
-        } else {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            })
+            const json = await res.json()
+            if (json.ok) {
+                sessionStorage.setItem('admin_auth', 'true')
+                onAuth()
+            } else {
+                setError(true)
+                setShake(true)
+                setTimeout(() => setShake(false), 600)
+            }
+        } catch {
             setError(true)
             setShake(true)
             setTimeout(() => setShake(false), 600)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -273,8 +290,8 @@ function AuthGate({ onAuth }) {
                         ${shake ? 'animate-shake' : ''}`}
                 />
                 {error && <p className="text-red-400 text-[13px] font-body text-center -mt-1">Wrong password</p>}
-                <button type="submit" className="w-full bg-accent text-white dark:text-black font-semibold rounded-full px-6 py-2 transition-opacity hover:opacity-80">
-                    Enter Dashboard
+                <button type="submit" disabled={loading} className="w-full bg-accent text-white dark:text-black font-semibold rounded-full px-6 py-2 transition-opacity hover:opacity-80 disabled:opacity-60">
+                    {loading ? 'Checking...' : 'Enter Dashboard'}
                 </button>
             </form>
             <style>{`
@@ -2066,7 +2083,6 @@ function ProjectsTab({ showToast }) {
 
     const load = useCallback(async () => {
         const { data } = await supabase.from('projects').select('*').order('sort_order', { ascending: true })
-        console.log("Fetched Projects (Admin):", data)
         setItems(data || []); setLoading(false)
     }, [])
     useEffect(() => { load() }, [load])
@@ -2927,7 +2943,7 @@ function LinksSEOTab({ showToast }) {
             const res = await fetch('/api/update-env', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: 'VITE_ADMIN_PASSWORD', value: passwords.newPass })
+                body: JSON.stringify({ key: 'ADMIN_PASSWORD', value: passwords.newPass })
             })
             if (!res.ok) throw new Error('Failed to update')
             showToast('Password updated! Restart dev server.')
@@ -3297,7 +3313,7 @@ function ProcessTab({ showToast }) {
     )
 }
 
-function Admin() {
+function AdminDashboard() {
     const [authed, setAuthed] = useState(() => sessionStorage.getItem('admin_auth') === 'true')
     const [activeTab, setActiveTab] = useState('Dashboard')
     const [toast, setToast] = useState(null)
@@ -3329,6 +3345,15 @@ function Admin() {
             </button>
             <Sidebar active={activeTab} onNav={setActiveTab} onLogout={logout} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <main className="ml-0 md:ml-[220px] flex-1 min-h-screen overflow-y-auto px-[var(--pad-side)]" style={{ paddingTop: 'var(--pad-admin-t)', paddingBottom: 'var(--pad-admin-b)' }}>
+                {import.meta.env.PROD && (
+                    <div className="mb-6 flex items-start gap-3 bg-amber-950/40 border border-amber-500/30 text-amber-300 rounded-xl px-5 py-4 text-[13px] font-body">
+                        <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                        <div>
+                            <p className="font-semibold">Read-only in production</p>
+                            <p className="text-amber-400/70 mt-0.5">Run <code className="bg-amber-500/20 px-1 rounded font-mono">npm run dev</code> locally to edit content, then <code className="bg-amber-500/20 px-1 rounded font-mono">git push</code> to deploy.</p>
+                        </div>
+                    </div>
+                )}
                 {activeTab === 'Dashboard' && <DashboardTab />}
                 {activeTab === 'Leads' && <LeadsTab />}
                 {activeTab === 'Hero' && <HeroTab showToast={showToast} />}
@@ -3348,6 +3373,11 @@ function Admin() {
             {toast && <Toast key={toast.key} message={toast.message} type={toast.type} onDone={() => setToast(null)} />}
         </div>
     )
+}
+
+function Admin() {
+    if (import.meta.env.PROD) return <Navigate to="/" replace />
+    return <AdminDashboard />
 }
 
 export default Admin

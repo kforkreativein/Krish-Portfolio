@@ -99,8 +99,8 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
             {contactEmail}
           </a>
         </div>
-        <div className="flex flex-col items-center md:items-start lg:items-center justify-center gap-3">
-          <div className="flex items-center md:items-start lg:items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
             <Phone className="w-3 h-3" /> CALL TODAY -
           </div>
           <a href={phoneHref} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
@@ -134,7 +134,7 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
       <div style={{
         backgroundColor: v.bgGray,
         borderTop: `1px solid ${v.border}`,
-        padding: '0 36px',
+        padding: '14px 36px',
       }}>
         <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '11px', fontWeight: 400, color: isDark ? '#a1a1aa' : '#666666' }}>© Copyright 2026. All Rights Reserved by {footerName}</span>
       </div>

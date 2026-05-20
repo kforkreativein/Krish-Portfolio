@@ -8,10 +8,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 5000;
 
-// Enable CORS if needed
+// Security headers for the local production preview server
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-Content-Type-Options', 'nosniff');
+    res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
     next();
 });
 

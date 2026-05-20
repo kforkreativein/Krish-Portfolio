@@ -25,6 +25,7 @@ export default function VideoPlayer({
     const videoRef = useRef(null)
     const [hovered, setHovered] = useState(false)
     const [iframeReady, setIframeReady] = useState(false)
+    const [iframeLoaded, setIframeLoaded] = useState(false)
     const [localMuted, setLocalMuted] = useState(forceMuted)
     const [isIntersecting, setIsIntersecting] = useState(false)
     const [actionIcon, setActionIcon] = useState(null) // 'play', 'pause', 'mute', 'unmute'
@@ -76,7 +77,10 @@ export default function VideoPlayer({
     useEffect(() => {
         if (!isYouTube) return
         if (isActive) setIframeReady(true)
-        else setIframeReady(false)
+        else {
+            setIframeReady(false)
+            setIframeLoaded(false)
+        }
     }, [isActive, isYouTube])
 
     // Direct video: play/pause when isActive changes
@@ -185,7 +189,10 @@ export default function VideoPlayer({
     const handleMouseLeave = () => {
         setHovered(false)
         if (isYouTube) {
-            if (!isActive) setIframeReady(false)
+            if (!isActive) {
+                setIframeReady(false)
+                setIframeLoaded(false)
+            }
         } else if (videoRef.current) {
             // Only pause if this video is not intersecting (not center of viewport)
             if (!isIntersecting) {
@@ -196,7 +203,7 @@ export default function VideoPlayer({
 
     // ── YouTube ──────────────────────────────────────────────────────────────
     if (isYouTube) {
-        const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${localMuted ? 1 : 0}&loop=1&playlist=${ytId}&controls=0&playsinline=1&rel=0&modestbranding=1`
+        const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${localMuted ? 1 : 0}&loop=1&playlist=${ytId}&controls=0&showinfo=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0`
 
         return (
             <div
@@ -204,43 +211,42 @@ export default function VideoPlayer({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                {/* Thumbnail — shown when iframe not mounted */}
-                {!iframeReady && (
-                    thumbnail
-                        ? <img
-                            src={thumbnail}
-                            alt={reel.title || 'YouTube video'}
-                            className="w-full h-full object-cover"
-                            style={{ objectFit: 'cover', objectPosition: 'center' }}
-                            loading="lazy"
-                            onError={(e) => {
-                                if (e.target.src.includes('maxresdefault')) {
-                                    e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
-                                }
-                            }}
-                        />
-                        : <div className="w-full h-full bg-bg-3" />
-                )}
+                {/* Thumbnail — always visible as background, fades out only once iframe has loaded */}
+                {thumbnail
+                    ? <img
+                        src={thumbnail}
+                        alt={reel.title || 'YouTube video'}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${iframeReady && iframeLoaded ? 'opacity-0' : 'opacity-100'}`}
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
+                        onError={(e) => {
+                            if (e.target.src.includes('maxresdefault')) {
+                                e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+                            }
+                        }}
+                    />
+                    : <div className="absolute inset-0 bg-black" />
+                }
 
                 {/* Centered play icon — only when not hovering and not playing */}
                 {!hovered && !iframeReady && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                         <div className="w-14 h-14 bg-black/50 rounded-full flex items-center justify-center">
                             <Play className="w-6 h-6 text-white fill-white ml-1" />
                         </div>
                     </div>
                 )}
 
-                {/* YouTube iframe — mounted on hover or active; unmounted on leave/deactivate */}
+                {/* YouTube iframe — mounted on hover or active; scaled to crop YT UI */}
                 {iframeReady && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <iframe
                             key={`yt-${ytId}-${localMuted}`}
                             src={embedUrl}
-                            className="absolute inset-0 w-full h-full"
+                            className="absolute inset-0 w-full h-full pointer-events-none origin-center scale-[1.2]"
+                            style={{ border: 'none' }}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
                             title="YouTube video"
+                            onLoad={() => setIframeLoaded(true)}
                         />
                     </div>
                 )}
@@ -273,9 +279,19 @@ export default function VideoPlayer({
                         {localMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                     </button>
                     <div className="flex-1 h-1 bg-white/30 rounded-lg" />
-                    <span className="text-white text-[9px] font-mono tracking-wider flex-shrink-0 pr-1">
-                        Live
-                    </span>
+                    {instagramUrl && (
+                        <a
+                            href={instagramUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1 px-2 py-1 rounded-full border border-white/30 text-white text-[10px] font-medium hover:bg-white/20 transition pointer-events-auto"
+                            aria-label="Open Post"
+                        >
+                            <ExternalLink size={11} />
+                            <span>Open Post</span>
+                        </a>
+                    )}
                 </div>
 
                 {/* Caption overlay */}

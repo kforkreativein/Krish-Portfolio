@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "number": "01",
+    "title": "Video Editing",
+    "description": "Cinematic edits, Reels, YouTube videos, and motion graphics that hook viewers in the first 3 seconds. Every frame is intentional. Every cut has a reason.",
+    "tags": ["Premiere Pro", "After Effects", "Reels", "YT Shorts"],
+    "bullet_points": ["Cinematic edits for YouTube, Reels & Shorts", "Motion graphics and visual effects", "Color grading and sound design", "Hook-first editing for maximum retention"],
+    "image_url": "/uploads/service-video-editing.webp",
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "number": "02",
+    "title": "Social Media Management",
+    "description": "Full-stack management — content calendar, captions, scheduling, analytics, and a growth strategy built around your brand. Not just posting. Growing.",
+    "tags": ["Instagram", "Facebook", "LinkedIn", "Strategy"],
+    "bullet_points": ["Full content calendar and scheduling", "Caption writing and hashtag strategy", "Analytics tracking and growth reporting", "Platform-specific content strategy"],
+    "image_url": "/uploads/service-social-media.webp",
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "id": 3,
+    "number": "03",
+    "title": "AI Automation",
+    "description": "AI avatars, voice cloning, automated content pipelines, and ChatGPT-powered lead gen systems. Your brand running 24/7 — without you in the room.",
+    "tags": ["Heygen", "Eleven Labs", "ChatGPT", "Claude"],
+    "bullet_points": ["AI avatar creation with Heygen", "Voice cloning with Eleven Labs", "Automated content pipelines", "ChatGPT-powered lead gen systems"],
+    "image_url": "/uploads/service-ai-automation.webp",
+    "is_active": true,
+    "sort_order": 3
+  },
+  {
+    "id": 4,
+    "number": "04",
+    "title": "Graphic Design",
+    "description": "Brand identity, social graphics, thumbnails, and posters. Visual content so sharp it makes people stop mid-scroll and actually look at what your brand has to say.",
+    "tags": ["Photoshop", "Illustrator", "Branding"],
+    "bullet_points": ["Brand identity and logo design", "Social media graphics and thumbnails", "Poster and marketing collateral", "Canva AI and Figma workflows"],
+    "image_url": "/uploads/service-graphic-design.webp",
+    "is_active": true,
+    "sort_order": 4
+  }
+]

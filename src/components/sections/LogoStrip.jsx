@@ -24,8 +24,11 @@ export default function LogoStrip({ siteContent }) {
         }))
         : []
 
-    // Duplicate to create seamless infinite loop
-    const stripItems = [...displayClients, ...displayClients, ...displayClients, ...displayClients]
+    // Names that get a 50% size boost
+    const boostedNames = ['Hemali Kevalia', 'Krish Computer', 'Sparsh Salon', 'Kforkreative']
+
+    // Duplicate once for seamless infinite loop
+    const stripItems = [...displayClients, ...displayClients]
 
     return (
         <section className="bg-bg overflow-hidden flex flex-col items-center" style={{ paddingTop: 'var(--pad-clients-t)', paddingBottom: 'var(--pad-clients-b)' }}>
@@ -71,7 +74,11 @@ export default function LogoStrip({ siteContent }) {
                                                 alt={client.name}
                                                 width={160}
                                                 height={56}
-                                                className="h-10 md:h-14 w-auto object-contain transition-opacity duration-300 opacity-80 hover:opacity-100"
+                                                className={`${
+                                                    boostedNames.includes(client.name)
+                                                        ? 'h-[60px] md:h-[84px]'
+                                                        : 'h-10 md:h-14'
+                                                } w-auto object-contain transition-opacity duration-300 opacity-80 hover:opacity-100`}
                                             />
                                         ) : (
                                             <span className="font-heading font-bold text-[24px] md:text-[32px] text-text-muted opacity-40 uppercase">
@@ -89,10 +96,10 @@ export default function LogoStrip({ siteContent }) {
             <style>{`
         @keyframes marquee-forward {
           0% { transform: translateX(0); }
-          100% { transform: translateX(calc(-33.33% - 8px)); }
+          100% { transform: translateX(-50%); }
         }
         .animate-marquee-forward {
-          animation: marquee-forward 35s linear infinite;
+          animation: marquee-forward 30s linear infinite;
         }
       `}</style>
         </section>

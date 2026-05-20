@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Premiere Pro", "category": "Video", "emoji": "🎬", "icon_url": "/uploads/tool-premiere-pro.webp", "is_active": true, "sort_order": 1 },
+  { "id": 2, "name": "After Effects", "category": "Video", "emoji": "✨", "icon_url": "/uploads/tool-after-effects.webp", "is_active": true, "sort_order": 2 },
+  { "id": 3, "name": "Photoshop", "category": "Design", "emoji": "📸", "icon_url": "/uploads/tool-photoshop.webp", "is_active": true, "sort_order": 3 },
+  { "id": 4, "name": "Illustrator", "category": "Design", "emoji": "🎨", "icon_url": "/uploads/tool-illustrator.webp", "is_active": true, "sort_order": 4 },
+  { "id": 5, "name": "Instagram", "category": "Social", "emoji": "📱", "icon_url": "/uploads/tool-instagram.webp", "is_active": true, "sort_order": 5 },
+  { "id": 6, "name": "ChatGPT", "category": "AI", "emoji": "🤖", "icon_url": "/uploads/tool-chatgpt.webp", "is_active": true, "sort_order": 6 },
+  { "id": 7, "name": "Heygen", "category": "AI Avatar", "emoji": "🎭", "icon_url": "/uploads/tool-heygen.webp", "is_active": true, "sort_order": 7 },
+  { "id": 8, "name": "Eleven Labs", "category": "AI Voice", "emoji": "🔊", "icon_url": "/uploads/tool-elevenlabs.webp", "is_active": true, "sort_order": 8 },
+  { "id": 9, "name": "Higgsfield", "category": "AI Video", "emoji": "🎥", "icon_url": "/uploads/tool-higgsfield.webp", "is_active": true, "sort_order": 9 },
+  { "id": 10, "name": "Meta Ads", "category": "Marketing", "emoji": "📊", "icon_url": "/uploads/tool-meta-ads.webp", "is_active": true, "sort_order": 10 }
+]

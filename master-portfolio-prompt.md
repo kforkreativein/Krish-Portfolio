@@ -137,7 +137,7 @@ Use the portfolio client identities already present in the data files and screen
 The build should include the current portfolio clients and project examples such as:
 
 - Devi Bar
-- Hemali Kevalya
+- Hemali Kevalia
 - Krish Computer
 - Mithun Bar
 - Freelance Video Production

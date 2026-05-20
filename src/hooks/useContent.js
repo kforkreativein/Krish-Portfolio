@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/contentApi'
 import { stats, services, projects, testimonials, clients } from '../constants/data'
 
 const dedupeById = (items = [], fallbackPrefix = 'item') => {
@@ -136,6 +136,7 @@ export function useProjects() {
     is_cta: p.isCTA,
     is_active: true,
     sort_order: i,
+    project_reels: [],
   }))
 
   const [data, setData] = useState(null)
@@ -143,25 +144,53 @@ export function useProjects() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    async function fetch() {
-      const { data: rows, error: err } = await supabase
+    async function load() {
+      const { data: projs, error: pErr } = await supabase
         .from('projects')
-        .select('*, project_reels(*)')
+        .select('*')
         .eq('is_active', true)
         .order('sort_order', { ascending: true })
 
-      console.log("Fetched Projects (Hook):", rows)
+      console.log('Fetched Projects (Hook):', projs)
 
-      if (err) {
-        setError(err)
+      if (pErr) {
+        setError(pErr)
         setData(fallback)
-      } else {
-        const uniqueRows = dedupeById(rows || [], 'project')
-        setData(uniqueRows.length > 0 ? uniqueRows : fallback)
+        setLoading(false)
+        return
       }
+
+      const { data: reels } = await supabase
+        .from('project_reels')
+        .select('*')
+
+      const merged = (projs || []).map(project => {
+        const projectReels = (reels || [])
+          .filter(r => String(r.project_id) === String(project.id))
+          .filter(r => r.is_active !== false)
+        projectReels.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+
+        const featured = project.featured_reel_id
+          ? projectReels.find(r => String(r.id) === String(project.featured_reel_id))
+          : projectReels.find(r => r.video_url || r.youtube_url || r.drive_url || r.thumbnail_url)
+
+        return {
+          ...project,
+          project_reels: projectReels,
+          video_url: featured?.video_url || project.video_url,
+          thumbnail_url: featured?.thumbnail_url || project.thumbnail_url,
+          source_url: featured?.instagram_url || featured?.youtube_url || featured?.video_url || featured?.drive_url || project.video_url,
+          instagram_url: featured?.instagram_url || project.instagram_url,
+          youtube_url: featured?.youtube_url || project.youtube_url,
+          drive_url: featured?.drive_url || project.drive_url,
+        }
+      })
+
+      const uniqueRows = dedupeById(merged, 'project')
+      setData(uniqueRows.length > 0 ? uniqueRows : fallback)
       setLoading(false)
     }
-    fetch()
+    load()
   }, [])
 
   return { data, loading, error }

@@ -9,10 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "seed": "node --experimental-vm-modules src/lib/seed.js",
+    "export": "node src/lib/export-from-supabase.js",
     "start": "node server.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.98.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "framer-motion": "^11.18.0",

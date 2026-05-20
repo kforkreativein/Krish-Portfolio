@@ -1,0 +1,123 @@
+[
+  {
+    "id": 1,
+    "name": "Krish Computer",
+    "type": "Tech Retail",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-krish-computer-white.png",
+    "logo_light_url": "/uploads/client-krish-computer-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "name": "Sparsh Salon",
+    "type": "Beauty & Wellness",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-sparsh-white.png",
+    "logo_light_url": "/uploads/client-sparsh-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 3
+  },
+  {
+    "id": 3,
+    "name": "Amuree",
+    "type": "Fashion",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-amuree-white.png",
+    "logo_light_url": "/uploads/client-amuree-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 4
+  },
+  {
+    "id": 4,
+    "name": "Kforkreative",
+    "type": "Agency",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-kforkreative-white.png",
+    "logo_light_url": "/uploads/client-kforkreative-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 5
+  },
+  {
+    "id": 5,
+    "name": "Spiceroute",
+    "type": "F&B",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-spiceroute-white.png",
+    "logo_light_url": "/uploads/client-spiceroute-white.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 6
+  },
+  {
+    "id": 6,
+    "name": "Hemali Kevalia",
+    "type": "Wellness",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-hemali-kevalia-white.png",
+    "logo_light_url": "/uploads/client-hemali-kevalia-color.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 2
+  },
+  {
+    "id": 7,
+    "name": "ByteWeb",
+    "type": "Tech",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-byteweb-white.png",
+    "logo_light_url": "/uploads/client-byteweb-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 7
+  },
+  {
+    "id": 8,
+    "name": "Tapect",
+    "type": "Tech",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-tapect-white.png",
+    "logo_light_url": "/uploads/client-tapect-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 8
+  },
+  {
+    "id": 9,
+    "name": "Loogaroo",
+    "type": "Creative",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-loogaroo-white.png",
+    "logo_light_url": "/uploads/client-loogaroo-black.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 9
+  },
+  {
+    "id": 10,
+    "name": "Akshmani Couture",
+    "type": "Fashion",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-akshmani-couture.png",
+    "logo_light_url": "/uploads/client-akshmani-couture.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 10
+  },
+  {
+    "id": 11,
+    "name": "Altima",
+    "type": "Business",
+    "logo_url": "",
+    "logo_dark_url": "/uploads/client-altima.png",
+    "logo_light_url": "/uploads/client-altima.png",
+    "is_active": true,
+    "is_cta": false,
+    "sort_order": 11
+  }
+]

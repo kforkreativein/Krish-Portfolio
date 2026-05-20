@@ -77,7 +77,26 @@ export default function CTA({ onOpenModal, siteContent, settings: settingsProp }
                         </Button>
                     </motion.div>
 
-                    {/* Floating Tags (hidden on mobile) */}
+                    {/* Floating Tags — mobile: flex wrap row above button; desktop: absolute positioned */}
+                    <div className="flex flex-wrap justify-center gap-2 mt-6 mb-2 md:hidden">
+                        {(pills || []).map((tag, i) => (
+                            <motion.span
+                                key={i}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: 0.15 + (i * 0.07) }}
+                                className={`px-3 py-1.5 rounded-full font-body text-[11px] font-medium whitespace-nowrap shadow-sm`}
+                                style={{
+                                    color: tag.isAccent ? (theme === 'dark' ? '#000000' : '#ffffff') : (theme === 'dark' ? '#cccccc' : '#444444'),
+                                    background: tag.isAccent ? 'var(--accent)' : 'var(--glass-bg)',
+                                    border: tag.isAccent ? 'none' : '1px solid var(--border-strong)',
+                                }}
+                            >
+                                {tag.text}
+                            </motion.span>
+                        ))}
+                    </div>
                     <div className="hidden md:block absolute inset-0 pointer-events-none overflow-visible">
                         {(pills || []).map((tag, i) => (
                             <motion.div

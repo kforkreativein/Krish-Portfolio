@@ -24,13 +24,13 @@ INSERT INTO projects (
   1
 ),
 
--- 2. Hemali Kevalya
+-- 2. Hemali Kevalia
 (
   'Health & Wellness / Weight Loss Coaching',
   '🌿',
-  'Hemali Kevalya',
-  'hemali-kevalya',
-  'Hemali Kevalya / Krish Wellness Center',
+  'Hemali Kevalia',
+  'hemali-kevalia',
+  'Hemali Kevalia / Krish Wellness Center',
   'Weight Loss & Wellness Coach',
   'AI avatar Hinglish Reels for weight loss transformation and holistic wellness coaching with automated lead magnet delivery.',
   'Hemali is the founder of Krish Wellness Center, a holistic wellness coaching practice focused on sustainable weight loss, metabolic health, and lifestyle transformation. She helps her audience move beyond quick fixes to build lasting habits through nutrition, mindset work, and body acceptance. Her content bridges science and practical advice, combining evidence-based wellness with empathetic storytelling.',
@@ -110,4 +110,4 @@ INSERT INTO projects (
 );
 
 -- Verify insertion
-SELECT id, title, slug, client_name, is_active, sort_order FROM projects WHERE slug IN ('devi-bar', 'hemali-kevalya', 'krish-computer', 'mithun-bar', 'freelance-projects', 'ai-films') ORDER BY sort_order;
+SELECT id, title, slug, client_name, is_active, sort_order FROM projects WHERE slug IN ('devi-bar', 'hemali-kevalia', 'krish-computer', 'mithun-bar', 'freelance-projects', 'ai-films') ORDER BY sort_order;
