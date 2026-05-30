@@ -161,33 +161,37 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                 ) : !projectsData || projectsData.length === 0 ? (
                     <div className="text-text-muted font-body flex justify-center py-20">No active projects found. Check database connection.</div>
                 ) : (
-                    <div className="flex flex-col md:flex-row md:items-center md:gap-10 lg:gap-12 min-h-0 md:min-h-[620px] lg:min-h-[680px]">
+                    <div className="flex flex-col lg:flex-row lg:items-stretch gap-14 lg:gap-8 min-h-0 lg:min-h-[620px] xl:min-h-[680px]">
 
-                        {/* Text panel — solid black, never overlays carousel */}
-                        <div className="w-full md:w-[38%] lg:w-[40%] md:shrink-0 bg-bg relative z-20 flex flex-col justify-center items-center md:items-start text-center md:text-left mb-10 md:mb-0 md:py-8 lg:py-10 md:pr-4 lg:pr-8">
+                        {/* Text panel — solid black wall (image 3), blocks carousel bleed */}
+                        <div className="w-full lg:w-[40%] lg:shrink-0 relative z-30 flex flex-col justify-center items-center lg:items-start text-center lg:text-left mb-12 lg:mb-0 self-stretch lg:py-12 lg:pr-10">
+                            <div
+                                aria-hidden="true"
+                                className="absolute inset-y-0 left-[calc(-1*var(--pad-side))] right-0 bg-bg pointer-events-none shadow-[16px_0_40px_rgba(8,8,8,1)]"
+                            />
                             {activeProject && (
-                                <div key={activeIndex} className="flex flex-col w-full max-w-[400px] md:max-w-none animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <div className="flex items-center justify-center md:justify-start gap-3 mb-5 md:mb-6">
-                                        <span className="bg-bg-3 border border-strong rounded-full px-3 py-1 font-body font-medium text-[11px] text-accent tracking-widest uppercase">
-                                            {activeProject.category || 'Portfolio'}
+                                <div key={activeIndex} className="relative flex flex-col w-full max-w-[400px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+                                        <span className="bg-transparent border border-strong rounded-full px-3 py-1 font-body font-medium text-[11px] text-accent tracking-widest uppercase">
+                                            {activeProject.is_cta ? 'Portfolio' : (activeProject.category || 'Portfolio')}
                                         </span>
                                     </div>
-                                    <h3 className="font-heading font-bold text-[clamp(28px,8vw,40px)] md:text-[clamp(26px,3.5vw,44px)] lg:text-[clamp(28px,4vw,52px)] text-text leading-[1.1] tracking-tight mb-4">
+                                    <h3 className="font-heading font-bold text-[clamp(28px,8vw,40px)] md:text-[clamp(28px,4vw,52px)] text-text leading-[1.1] tracking-tight mb-4">
                                         {activeProject.title}
                                     </h3>
                                     <p className="font-body text-[15px] md:text-[16px] text-text-muted leading-[1.7] mb-8">
                                         {activeProject.description}
                                     </p>
 
-                                    <div className="flex flex-col gap-4 w-full md:w-auto">
+                                    <div className="flex flex-col gap-4 w-full lg:w-auto">
                                         {activeProject.is_cta ? (
-                                            <Button onClick={onOpenModal} className="w-full md:w-auto justify-center font-extrabold">
+                                            <Button onClick={onOpenModal} className="w-full lg:w-auto justify-center lg:justify-start font-extrabold">
                                                 {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                                             </Button>
                                         ) : activeProject.slug ? (
-                                            <Button onClick={() => navigate(`/work/${activeProject.slug}`)} variant="ghost" className="w-full md:w-auto justify-center">See Full Project →</Button>
+                                            <Button onClick={() => navigate(`/work/${activeProject.slug}`)} variant="ghost" className="w-full lg:w-auto justify-center lg:justify-start">See Full Project →</Button>
                                         ) : (
-                                            <Button variant="ghost" disabled className="w-full md:w-auto justify-center" style={{ opacity: 0.4, pointerEvents: 'none' }}>Coming Soon</Button>
+                                            <Button variant="ghost" disabled className="w-full lg:w-auto justify-center lg:justify-start" style={{ opacity: 0.4, pointerEvents: 'none' }}>Coming Soon</Button>
                                         )}
                                     </div>
                                 </div>
@@ -195,7 +199,7 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                         </div>
 
                         {/* Carousel — contained in its column, no viewport bleed */}
-                        <div className="w-full md:w-[62%] lg:w-[60%] md:min-w-0 flex flex-col gap-5 md:gap-6 justify-center [--work-card-half:130px] sm:[--work-card-half:140px] md:[--work-card-half:160px] lg:[--work-card-half:180px]" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
+                        <div className="w-full lg:w-[60%] lg:min-w-0 flex flex-col gap-5 md:gap-6 justify-center relative z-10 overflow-hidden [--work-card-half:130px] sm:[--work-card-half:140px] md:[--work-card-half:160px] lg:[--work-card-half:180px]" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
                             <div
                                 ref={scrollRef}
                                 onScroll={handleScroll}
@@ -217,7 +221,7 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                                 ))}
                             </div>
 
-                            <div className="flex justify-center md:justify-end gap-3">
+                            <div className="flex justify-center lg:justify-end gap-3">
                                 <button onClick={() => scrollToIndex(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-strong flex items-center justify-center text-text hover:bg-white/5 hover:border-text transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-strong focus:outline-none">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
                                 </button>
