@@ -172,16 +172,20 @@ export function useProjects() {
 
         const featured = project.featured_reel_id
           ? projectReels.find(r => String(r.id) === String(project.featured_reel_id))
-          : projectReels.find(r => r.video_url || r.youtube_url || r.drive_url || r.thumbnail_url)
+          : projectReels.find(r => r.video_url || r.drive_url)
+            || projectReels.find(r => r.youtube_url || r.thumbnail_url)
+
+        const cardVideoUrl = project.video_url || featured?.video_url || featured?.drive_url
+        const cardYoutubeUrl = cardVideoUrl ? null : (featured?.youtube_url || project.youtube_url)
 
         return {
           ...project,
           project_reels: projectReels,
-          video_url: featured?.video_url || project.video_url,
+          video_url: cardVideoUrl || null,
           thumbnail_url: featured?.thumbnail_url || project.thumbnail_url,
           source_url: featured?.instagram_url || featured?.youtube_url || featured?.video_url || featured?.drive_url || project.video_url,
           instagram_url: featured?.instagram_url || project.instagram_url,
-          youtube_url: featured?.youtube_url || project.youtube_url,
+          youtube_url: cardYoutubeUrl || null,
           drive_url: featured?.drive_url || project.drive_url,
         }
       })

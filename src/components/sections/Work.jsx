@@ -161,24 +161,25 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                 ) : !projectsData || projectsData.length === 0 ? (
                     <div className="text-text-muted font-body flex justify-center py-20">No active projects found. Check database connection.</div>
                 ) : (
-                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-14 lg:gap-8 min-h-[600px]">
+                    <div className="flex flex-col md:flex-row md:items-center md:gap-10 lg:gap-12 min-h-0 md:min-h-[620px] lg:min-h-[680px]">
 
-                        <div className="w-full lg:w-[40%] flex flex-col justify-center items-center lg:items-start text-center lg:text-left self-center z-20 mb-12 lg:mb-0 transition-opacity duration-300">
+                        {/* Text panel — solid black, never overlays carousel */}
+                        <div className="w-full md:w-[38%] lg:w-[40%] md:shrink-0 bg-bg relative z-20 flex flex-col justify-center items-center md:items-start text-center md:text-left mb-10 md:mb-0 md:py-8 lg:py-10 md:pr-4 lg:pr-8">
                             {activeProject && (
-                                <div key={activeIndex} className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+                                <div key={activeIndex} className="flex flex-col w-full max-w-[400px] md:max-w-none animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="flex items-center justify-center md:justify-start gap-3 mb-5 md:mb-6">
                                         <span className="bg-bg-3 border border-strong rounded-full px-3 py-1 font-body font-medium text-[11px] text-accent tracking-widest uppercase">
                                             {activeProject.category || 'Portfolio'}
                                         </span>
                                     </div>
-                                    <h3 className="font-heading font-bold text-[clamp(28px,8vw,40px)] md:text-[clamp(28px,4vw,52px)] text-text leading-[1.1] tracking-tight mb-4">
+                                    <h3 className="font-heading font-bold text-[clamp(28px,8vw,40px)] md:text-[clamp(26px,3.5vw,44px)] lg:text-[clamp(28px,4vw,52px)] text-text leading-[1.1] tracking-tight mb-4">
                                         {activeProject.title}
                                     </h3>
-                                    <p className="font-body text-[15px] md:text-[16px] text-text-muted leading-[1.7] max-w-[400px] mb-8">
+                                    <p className="font-body text-[15px] md:text-[16px] text-text-muted leading-[1.7] mb-8">
                                         {activeProject.description}
                                     </p>
 
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-4 w-full md:w-auto">
                                         {activeProject.is_cta ? (
                                             <Button onClick={onOpenModal} className="w-full md:w-auto justify-center font-extrabold">
                                                 {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
@@ -193,10 +194,15 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                             )}
                         </div>
 
-                        <div className="w-full lg:w-[60%] flex-col gap-6 flex min-h-[620px] md:min-h-[700px] lg:min-h-[750px] justify-center" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
-                            <div ref={scrollRef} onScroll={handleScroll} className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-6 md:gap-8 pb-4 pt-6 px-4 md:px-6 lg:px-8 scroll-px-5 md:scroll-px-8 lg:scroll-px-[52px] no-scrollbar cursor-grab active:cursor-grabbing relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] justify-center lg:justify-start">
+                        {/* Carousel — contained in its column, no viewport bleed */}
+                        <div className="w-full md:w-[62%] lg:w-[60%] md:min-w-0 flex flex-col gap-5 md:gap-6 justify-center [--work-card-half:130px] sm:[--work-card-half:140px] md:[--work-card-half:160px] lg:[--work-card-half:180px]" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
+                            <div
+                                ref={scrollRef}
+                                onScroll={handleScroll}
+                                className="flex flex-row overflow-x-auto overscroll-x-contain snap-x snap-mandatory gap-5 sm:gap-6 md:gap-7 lg:gap-8 py-4 md:py-6 w-full pl-[max(0px,calc(50%-var(--work-card-half)))] pr-[max(0px,calc(50%-var(--work-card-half)))] scroll-px-[max(0px,calc(50%-var(--work-card-half)))] no-scrollbar cursor-grab active:cursor-grabbing [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] justify-start"
+                            >
                                 {projectsData.map((project, idx) => (
-                                    <div key={project.id || idx} className="flex flex-col items-center gap-6">
+                                    <div key={project.id || idx} className="flex flex-col items-center snap-center shrink-0">
                                         <PhoneCard
                                             project={project}
                                             idx={idx}
@@ -211,7 +217,7 @@ export default function Work({ onOpenModal, settings, siteContent }) {
                                 ))}
                             </div>
 
-                            <div className="flex justify-center lg:justify-end gap-3 px-6 lg:px-0">
+                            <div className="flex justify-center md:justify-end gap-3">
                                 <button onClick={() => scrollToIndex(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-strong flex items-center justify-center text-text hover:bg-white/5 hover:border-text transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-strong focus:outline-none">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
                                 </button>

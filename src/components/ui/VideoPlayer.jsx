@@ -1,10 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Play, Pause, Volume2, VolumeX, ExternalLink } from 'lucide-react'
-import { getYouTubeId } from '../../utils/videoUtils'
-
-function getYouTubeThumbnail(id) {
-    return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
-}
+import { getYouTubeId, getYouTubeThumbnail, captureVideoFirstFrame } from '../../utils/videoUtils'
 
 /**
  * Unified self-contained media player.
@@ -26,7 +22,8 @@ export default function VideoPlayer({
     const [hovered, setHovered] = useState(false)
     const [iframeReady, setIframeReady] = useState(false)
     const [iframeLoaded, setIframeLoaded] = useState(false)
-    const [localMuted, setLocalMuted] = useState(forceMuted)
+    // Start muted so autoplay works in browsers; user can unmute via controls
+    const [localMuted, setLocalMuted] = useState(forceMuted || true)
     const [isIntersecting, setIsIntersecting] = useState(false)
     const [actionIcon, setActionIcon] = useState(null) // 'play', 'pause', 'mute', 'unmute'
     const [isBuffering, setIsBuffering] = useState(false)
@@ -61,17 +58,48 @@ export default function VideoPlayer({
         })
     }
 
-    const ytId = reel?.youtube_url ? getYouTubeId(reel.youtube_url) : null
-    const isYouTube = !!ytId
-
     let videoSrc = reel?.video_url
     if (!videoSrc && reel?.drive_url) {
         const match = reel.drive_url.match(/\/d\/([^/?]+)/)
         if (match) videoSrc = `https://drive.google.com/uc?export=download&id=${match[1]}`
     }
 
+    const hasDirectVideo = !!videoSrc
+    const ytId = !hasDirectVideo && reel?.youtube_url ? getYouTubeId(reel.youtube_url) : null
+    const isYouTube = !!ytId
+
     const instagramUrl = reel?.instagram_url
-    const thumbnail = reel?.thumbnail_url || (ytId ? getYouTubeThumbnail(ytId) : null)
+    const [posterUrl, setPosterUrl] = useState(reel?.thumbnail_url || null)
+
+    useEffect(() => {
+        if (reel?.thumbnail_url) {
+            setPosterUrl(reel.thumbnail_url)
+            return
+        }
+
+        let cancelled = false
+
+        if (hasDirectVideo && videoSrc) {
+            captureVideoFirstFrame(videoSrc)
+                .then((url) => { if (!cancelled) setPosterUrl(url) })
+                .catch(() => { if (!cancelled) setPosterUrl(null) })
+            return () => { cancelled = true }
+        }
+
+        if (ytId) {
+            setPosterUrl(getYouTubeThumbnail(reel.youtube_url, { frame: true }))
+            return undefined
+        }
+
+        setPosterUrl(null)
+        return undefined
+    }, [reel?.thumbnail_url, reel?.youtube_url, hasDirectVideo, videoSrc, ytId])
+
+    const thumbnail = posterUrl
+        || reel?.thumbnail_url
+        || (ytId ? getYouTubeThumbnail(reel.youtube_url) : null)
+
+    const showPosterOverlay = thumbnail && (!isYouTube || !(iframeReady && iframeLoaded && (hovered || isActive)))
 
     // YouTube: mount/unmount iframe when isActive changes
     useEffect(() => {
@@ -201,9 +229,104 @@ export default function VideoPlayer({
         }
     }
 
+    // ── Direct video (uploaded) — preferred over YouTube ─────────────────────
+    if (hasDirectVideo) {
+        return (
+            <div
+                className="w-full h-full relative bg-black group"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                {thumbnail && !hovered && !isActive && (
+                    <img
+                        src={thumbnail}
+                        alt={reel.title || 'Video thumbnail'}
+                        className="absolute inset-0 w-full h-full object-cover z-[5] pointer-events-none"
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    />
+                )}
+
+                <video
+                    ref={videoRef}
+                    src={videoSrc}
+                    poster={thumbnail || undefined}
+                    className={`w-full h-full object-cover work-video ${thumbnail && !hovered && !isActive ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    loop
+                    muted={localMuted}
+                    playsInline
+                    webkit-playsinline="true"
+                    autoPlay={isActive}
+                    disablePictureInPicture
+                    controlsList="nodownload nofullscreen"
+                    preload={isActive || hovered ? 'auto' : 'metadata'}
+                    onLoadedData={() => {
+                        if (videoRef.current && !isActive && !hovered) {
+                            videoRef.current.currentTime = 0.01
+                        }
+                    }}
+                >
+                    <track kind="captions" />
+                </video>
+
+                <div
+                    className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-pointer"
+                    onClick={handleLeftTap}
+                    aria-label="Toggle Play/Pause"
+                />
+                <div
+                    className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-pointer"
+                    onClick={handleRightTap}
+                    aria-label="Toggle Mute/Unmute"
+                />
+
+                <div
+                    className={`absolute inset-0 flex items-center justify-center z-30 pointer-events-none transition-opacity duration-300 ${actionIcon ? 'opacity-100' : 'opacity-0'}`}
+                >
+                    {actionIcon && (
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-lg">
+                            {actionIcon === 'play' && <Play size={28} className="fill-white ml-1" />}
+                            {actionIcon === 'pause' && <Pause size={28} className="fill-white" />}
+                            {actionIcon === 'mute' && <VolumeX size={28} />}
+                            {actionIcon === 'unmute' && <Volume2 size={28} />}
+                        </div>
+                    )}
+                </div>
+
+                {isBuffering && (
+                    <div className="absolute inset-0 flex items-center justify-center z-25 bg-black/30 backdrop-blur-sm pointer-events-none">
+                        <div className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full animate-spin" />
+                    </div>
+                )}
+
+                {hovered && instagramUrl && (
+                    <a
+                        href={instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`absolute top-4 right-4 z-40 bg-black/60 backdrop-blur-md text-white/90 rounded-full font-medium flex items-center justify-center hover:bg-black/80 transition-all pointer-events-auto ${showLabel ? 'px-3 py-1.5 text-xs gap-1.5' : 'w-9 h-9'}`}
+                        aria-label={showLabel ? 'Open Post' : 'View on Instagram'}
+                    >
+                        <ExternalLink size={16} />
+                        {showLabel && 'Open Post'}
+                    </a>
+                )}
+
+                {showCaption && (reel?.title || reel?.caption) && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-200">
+                        {reel.title && <p className="font-heading font-bold text-[13px] text-white leading-tight">{reel.title}</p>}
+                        {reel.caption && <p className="font-body text-[11px] text-white/80 mt-1 leading-snug line-clamp-2">{reel.caption}</p>}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     // ── YouTube ──────────────────────────────────────────────────────────────
     if (isYouTube) {
-        const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${localMuted ? 1 : 0}&loop=1&playlist=${ytId}&controls=0&showinfo=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0`
+        const origin = typeof window !== 'undefined' ? encodeURIComponent(window.location.origin) : ''
+        const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${localMuted ? 1 : 0}&loop=1&playlist=${ytId}&controls=0&showinfo=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1${origin ? `&origin=${origin}` : ''}`
 
         return (
             <div
@@ -216,11 +339,14 @@ export default function VideoPlayer({
                     ? <img
                         src={thumbnail}
                         alt={reel.title || 'YouTube video'}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${iframeReady && iframeLoaded ? 'opacity-0' : 'opacity-100'}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showPosterOverlay ? 'opacity-100' : 'opacity-0'}`}
                         style={{ objectFit: 'cover', objectPosition: 'center' }}
                         onError={(e) => {
-                            if (e.target.src.includes('maxresdefault')) {
-                                e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+                            const src = e.target.src
+                            if (src.includes('maxresdefault') || src.includes('/0.jpg')) {
+                                e.target.src = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
+                            } else if (src.includes('hqdefault')) {
+                                e.target.src = `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`
                             }
                         }}
                     />
@@ -293,91 +419,6 @@ export default function VideoPlayer({
                         </a>
                     )}
                 </div>
-
-                {/* Caption overlay */}
-                {showCaption && (reel?.title || reel?.caption) && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent pt-16 pb-3 px-4 z-10 pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-200">
-                        {reel.title && <p className="font-heading font-bold text-[13px] text-white leading-tight">{reel.title}</p>}
-                        {reel.caption && <p className="font-body text-[11px] text-white/80 mt-1 leading-snug line-clamp-2">{reel.caption}</p>}
-                    </div>
-                )}
-            </div>
-        )
-    }
-
-    // ── Direct video ─────────────────────────────────────────────────────────
-    if (videoSrc) {
-        return (
-            <div
-                className="w-full h-full relative bg-black group"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                <video
-                    ref={videoRef}
-                    src={videoSrc}
-                    poster={thumbnail || undefined}
-                    className="w-full h-full object-cover work-video"
-                    style={{ objectFit: 'cover', objectPosition: 'center' }}
-                    loop
-                    muted={localMuted}
-                    playsInline
-                    webkit-playsinline="true"
-                    autoPlay={isActive}
-                    disablePictureInPicture
-                    controlsList="nodownload nofullscreen"
-                    preload="auto"
-                >
-                    <track kind="captions" />
-                </video>
-
-                {/* Invisible Interaction Overlays */}
-                <div 
-                    className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-pointer"
-                    onClick={handleLeftTap}
-                    aria-label="Toggle Play/Pause"
-                />
-                <div 
-                    className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-pointer"
-                    onClick={handleRightTap}
-                    aria-label="Toggle Mute/Unmute"
-                />
-
-                {/* Transient Action Icon */}
-                <div 
-                    className={`absolute inset-0 flex items-center justify-center z-30 pointer-events-none transition-opacity duration-300 ${actionIcon ? 'opacity-100' : 'opacity-0'}`}
-                >
-                    {actionIcon && (
-                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-lg">
-                            {actionIcon === 'play' && <Play size={28} className="fill-white ml-1" />}
-                            {actionIcon === 'pause' && <Pause size={28} className="fill-white" />}
-                            {actionIcon === 'mute' && <VolumeX size={28} />}
-                            {actionIcon === 'unmute' && <Volume2 size={28} />}
-                        </div>
-                    )}
-                </div>
-
-                {/* Buffering loader — visible while video is loading */}
-                {isBuffering && (
-                    <div className="absolute inset-0 flex items-center justify-center z-25 bg-black/30 backdrop-blur-sm pointer-events-none">
-                        <div className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full animate-spin" />
-                    </div>
-                )}
-
-                {/* Instagram / external link — visible on hover */}
-                {hovered && instagramUrl && (
-                    <a
-                        href={instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className={`absolute top-4 right-4 z-40 bg-black/60 backdrop-blur-md text-white/90 rounded-full font-medium flex items-center justify-center hover:bg-black/80 transition-all pointer-events-auto ${showLabel ? 'px-3 py-1.5 text-xs gap-1.5' : 'w-9 h-9'}`}
-                        aria-label={showLabel ? 'Open Post' : 'View on Instagram'}
-                    >
-                        <ExternalLink size={16} />
-                        {showLabel && 'Open Post'}
-                    </a>
-                )}
 
                 {/* Caption overlay */}
                 {showCaption && (reel?.title || reel?.caption) && (

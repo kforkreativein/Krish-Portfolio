@@ -47,13 +47,13 @@ export default function CTA({ onOpenModal, siteContent, settings: settingsProp }
                 }}
             />
 
-            <div className="relative z-10 w-full max-w-[1000px] mx-auto">
+            <div className="relative z-10 w-full max-w-[min(100%,720px)] mx-auto">
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                     variants={stagger}
-                    className="glass-strong rounded-[24px] p-8 sm:p-12 md:p-[72px] flex flex-col items-center justify-center relative shadow-2xl"
+                    className="glass-strong rounded-[24px] aspect-square w-full p-8 sm:p-10 md:p-12 lg:p-[72px] flex flex-col items-center justify-center relative shadow-2xl"
                 >
                     <motion.h2
                         variants={fadeUp}
@@ -72,7 +72,7 @@ export default function CTA({ onOpenModal, siteContent, settings: settingsProp }
                     </motion.p>
 
                     <motion.div variants={fadeUp} className="relative z-20 w-full sm:w-auto">
-                        <Button onClick={onOpenModal} className="w-full sm:w-auto px-[8px] py-[3px] text-[10px] sm:px-10 sm:py-4 sm:text-lg font-extrabold border border-white/10" style={{ minHeight: 24 }}>
+                        <Button onClick={onOpenModal} className="w-full sm:w-auto px-10 py-4 text-lg font-extrabold border border-white/10">
                             {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                         </Button>
                     </motion.div>
