@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://krish-chhatrala.vercel.app/sitemap.xml
+Sitemap: https://krishchhatrala.live/sitemap.xml

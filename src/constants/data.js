@@ -187,6 +187,36 @@ export const testimonials = [
   },
 ]
 
+// ─── FAQs ─────────────────────────────────────────────────────────────────────
+
+export const faqs = [
+  {
+    id: 'video-types',
+    question: 'What types of videos do you edit?',
+    answer: 'I edit Instagram Reels, YouTube Shorts, long-form YouTube videos, brand films, AI avatar videos, product videos, and motion graphics. I work with footage from any camera, drone, or screen recording.',
+  },
+  {
+    id: 'international',
+    question: 'Do you work with international clients?',
+    answer: 'Yes. I work with brands across India and internationally. All communication happens over WhatsApp, email, or video call, and deliverables are shared via Google Drive or Dropbox. Time zones are not a barrier.',
+  },
+  {
+    id: 'timeline',
+    question: 'How long does a typical project take?',
+    answer: 'A single Reel or short-form edit is usually delivered within 2–3 business days. Ongoing social media management is month-to-month. AI systems and automation pipelines take 1–2 weeks depending on complexity.',
+  },
+  {
+    id: 'ai-tools',
+    question: 'What AI tools do you use?',
+    answer: 'I use Heygen for AI avatars, Eleven Labs for voice cloning, ChatGPT and Claude for content automation, and Higgsfield for AI-generated visuals. These tools let your brand produce content at scale without sacrificing quality.',
+  },
+  {
+    id: 'get-started',
+    question: 'How do I get started?',
+    answer: "Fill out the contact form on this site or message on WhatsApp at +91 9724690118. We'll book a free discovery call and I'll send a proposal within 24 hours.",
+  },
+]
+
 // ─── Process Steps ────────────────────────────────────────────────────────────
 
 export const processSteps = [

@@ -21,6 +21,7 @@ import CTA from './components/sections/CTA'
 import Different from './components/sections/Different'
 import Tools from './components/sections/Tools'
 import LogoStrip from './components/sections/LogoStrip'
+import FAQ from './components/sections/FAQ'
 
 import Admin from './pages/Admin'
 import ProjectDetail from './pages/ProjectDetail'
@@ -105,7 +106,7 @@ function Portfolio({ onOpenModal }) {
     return <div className="min-h-screen bg-bg text-text flex items-center justify-center">Loading...</div>
   }
 
-  const defaultSectionOrder = ['hero', 'different', 'tools', 'marquee', 'services', 'work', 'showreel', 'process', 'testimonials', 'cta']
+  const defaultSectionOrder = ['hero', 'different', 'tools', 'marquee', 'services', 'work', 'showreel', 'process', 'testimonials', 'faq', 'cta']
   const sectionOrder = (Array.isArray(siteContent?.section_order) && siteContent?.section_order?.length > 0)
     ? (siteContent?.section_order || defaultSectionOrder)
     : defaultSectionOrder
@@ -137,6 +138,8 @@ function Portfolio({ onOpenModal }) {
         return <Process key={key} siteContent={siteContent} />
       case 'testimonials':
         return <Testimonials key={key} siteContent={siteContent} />
+      case 'faq':
+        return <FAQ key={key} siteContent={siteContent} />
       case 'cta':
       case 'levelup':
       case 'level_up':
