@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@900&display=swap');
+/* Fonts loaded via index.html for optimal LCP: Inter + Syne */
 
 @tailwind base;
 @tailwind components;
@@ -291,6 +291,28 @@ body:not(.admin-dashboard) select {
 @media (hover: none) and (pointer: coarse) {
   * {
     cursor: auto !important;
+  }
+}
+
+/* ─── Touch Action — eliminates 300ms tap delay on mobile ───────────────── */
+
+button,
+a,
+[role="button"],
+input,
+select,
+textarea,
+label {
+  touch-action: manipulation;
+}
+
+/* ─── Mobile minimum touch target sizes ──────────────────────────────────── */
+
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
   }
 }
 

@@ -29,7 +29,7 @@ const TestimonialCard = ({ quote, author_name, author_role, author_initial, phot
 
             <div className="flex items-center gap-4 mt-auto">
                 {photo_url ? (
-                    <img src={photo_url} alt={author_name} width={42} height={42} className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full object-cover border border-strong shrink-0" />
+                    <img src={photo_url} alt={author_name} width={42} height={42} loading="lazy" decoding="async" className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full object-cover border border-strong shrink-0" />
                 ) : (
                     <div className="w-[36px] h-[36px] md:w-[42px] md:h-[42px] rounded-full border border-strong flex items-center justify-center shrink-0 bg-gradient-to-br from-bg-4 to-bg-2">
                         <span className="font-heading font-bold text-[14px] text-text">

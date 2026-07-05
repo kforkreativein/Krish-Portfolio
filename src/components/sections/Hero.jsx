@@ -14,7 +14,7 @@ const HeroBadge = ({ text }) => (
 
 const HeroTitle = ({ part1, part2, part3 }) => {
     return (
-        <div
+        <h1
             className="font-heading font-extrabold text-[clamp(40px,11vw,56px)] md:text-[56px] lg:text-[clamp(40px,6vw,80px)] leading-[1.0] md:leading-[0.9] tracking-[-0.04em] mb-6 flex flex-col items-center md:items-start text-center md:text-left w-full"
             style={{ fontFamily: "'Syne', 'Space Grotesk', sans-serif", fontStretch: 'expanded' }}
         >
@@ -23,7 +23,7 @@ const HeroTitle = ({ part1, part2, part3 }) => {
                 <span className="inline text-black dark:text-white">{part2 || 'Impossible to Scroll Past'}</span>{' '}
                 <span className="inline text-accent">{part3 || 'with AI + Video'}</span>
             </motion.div>
-        </div>
+        </h1>
     )
 }
 
@@ -107,19 +107,21 @@ const HeroPhotoCard = ({ imageUrl, cardName, cardBadge, cardLocation }) => (
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col glass-strong rounded-[24px] overflow-hidden w-full max-w-[280px] md:w-[240px] lg:w-[280px] mx-auto shrink-0 shadow-2xl relative"
+        className="flex flex-col glass-strong rounded-[24px] overflow-hidden w-full max-w-[220px] sm:max-w-[260px] md:w-[240px] lg:w-[280px] mx-auto shrink-0 shadow-2xl relative"
     >
         {/* Photo area — 16:9 */}
         <div className="relative overflow-hidden bg-bg" style={{ aspectRatio: '9/16', borderRadius: '16px 16px 0 0' }}>
             {imageUrl ? (
                 <img
-                    src={`${imageUrl}?width=800&quality=80&format=webp`}
-                    alt="Krish Chhatrala"
+                    src={imageUrl}
+                    srcSet={`${imageUrl}?width=320&quality=75&format=webp 320w, ${imageUrl}?width=560&quality=80&format=webp 560w, ${imageUrl}?width=800&quality=85&format=webp 800w`}
+                    sizes="(max-width: 768px) 220px, (max-width: 1024px) 240px, 280px"
+                    alt="Krish Chhatrala — Video Editor & AI Marketing Expert"
                     width={280}
                     height={498}
                     className="absolute inset-0 w-full h-full object-cover"
                     loading="eager"
-                    fetchpriority="high"
+                    fetchPriority="high"
                 />
             ) : (
                 <div
@@ -155,10 +157,9 @@ const Hero = ({ onOpenModal, siteContent, settings: settingsProp }) => {
     const settings = settingsProp || settingsFetched
 
     const cardImageUrl = settings?.hero_photo_url || null
-    console.log('[Hero] settings:', settings, '→ cardImageUrl:', cardImageUrl)
 
     return (
-        <section id="hero" className="relative w-full min-h-[80vh] flex items-center px-[var(--pad-side)] overflow-hidden" style={{ paddingTop: 'var(--pad-hero-t)', paddingBottom: 'var(--pad-hero-b)' }}>
+        <section id="hero" className="relative w-full min-h-0 max-h-none sm:min-h-[80vh] flex items-center px-[var(--pad-side)] overflow-hidden" style={{ paddingTop: 'var(--pad-hero-t)', paddingBottom: 'var(--pad-hero-b)' }}>
             {/* Background layers */}
             <div className="absolute inset-0 z-0 bg-bg" />
 
@@ -205,10 +206,10 @@ const Hero = ({ onOpenModal, siteContent, settings: settingsProp }) => {
 
                     <motion.div variants={fadeUp} custom={{ delay: 0.25 }} className="flex flex-col gap-4 w-full md:w-auto">
                         <div className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-[10px] md:gap-4 w-full md:w-auto">
-                            <Button onClick={onOpenModal} className="w-full md:w-auto justify-center px-2 py-1 text-[10px] md:px-7 md:py-3.5 md:text-base font-extrabold" style={{ minHeight: 26 }}>
+                            <Button onClick={onOpenModal} className="w-full md:w-auto justify-center px-6 py-3 text-sm md:px-7 md:py-3.5 md:text-base font-extrabold">
                                 {settings?.floating_cta_text || siteContent?.floating_cta_text || "Let's Talk"}
                             </Button>
-                            <Button variant="ghost" href="#work" className="w-full md:w-auto justify-center px-2 py-1 text-[10px] md:px-7 md:py-3.5 md:text-base" style={{ minHeight: 26 }}>
+                            <Button variant="ghost" href="#work" className="w-full md:w-auto justify-center px-6 py-3 text-sm md:px-7 md:py-3.5 md:text-base">
                                 {siteContent?.hero_secondary_cta || 'View My Work'}
                             </Button>
                         </div>

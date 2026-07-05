@@ -27,7 +27,7 @@ const FloatingCTA = ({ onOpenModal, settings }) => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8, y: 20 }}
                     onClick={onOpenModal}
-                    className="fixed bottom-8 right-8 z-[9999] px-8 py-4 rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95"
+                    className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-[9999] px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95 min-h-[48px]"
                     style={{ backgroundColor: 'var(--accent)', color: 'var(--btn-colored-text)' }}
                 >
                     <span className="font-extrabold tracking-tight">

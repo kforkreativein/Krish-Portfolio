@@ -54,9 +54,11 @@ export default function Different({ siteContent }) {
                                     {settings?.different_photo_url || settings?.avatar_image_url ? (
                                         <img
                                             src={settings?.different_photo_url || settings?.avatar_image_url}
-                                            alt="Different"
+                                            alt="Krish Chhatrala — Video Editor & AI Marketing Expert"
                                             width={500}
                                             height={340}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="w-full h-full object-contain"
                                         />
                                     ) : (

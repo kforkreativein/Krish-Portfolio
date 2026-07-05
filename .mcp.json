@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "type": "stdio",
+      "command": "/Users/krish/.jetro/runtime/node-darwin-arm64",
+      "args": [
+        "/Users/krish/.jetro/mcp-server/index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "/Users/krish/Documents/Ai/Web-Projects/Krish-Portfolio",
+        "JET_API_URL": "https://api.jetro.ai",
+        "PATH": "/Users/krish/.jetro/runtime:/Users/krish/.fly/bin:/Users/krish/.fly/bin:/Users/krish/.antigravity-ide/antigravity-ide/bin:/opt/homebrew/opt/rustup/bin:/Users/krish/.cargo/bin:/opt/homebrew/opt/rustup/bin:/Users/krish/.cargo/bin:/Users/krish/.bun/bin:/Users/krish/.opencode/bin:/opt/homebrew/bin:/Users/krish/.composio:/opt/homebrew/opt/rustup/bin:/Users/krish/.cargo/bin:/opt/homebrew/opt/rustup/bin:/Users/krish/.cargo/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/krish/.lmstudio/bin"
+      }
+    }
+  }
+}

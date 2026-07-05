@@ -74,6 +74,8 @@ export default function LogoStrip({ siteContent }) {
                                                 alt={client.name}
                                                 width={160}
                                                 height={56}
+                                                loading="lazy"
+                                                decoding="async"
                                                 className={`${
                                                     boostedNames.includes(client.name)
                                                         ? 'h-[60px] md:h-[84px]'

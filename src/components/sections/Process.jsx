@@ -9,7 +9,7 @@ import { useTheme } from '../../hooks/useTheme'
 const defaultProcessSteps = [
     { id: 'discovery', number: '01', title: 'Discovery Call', description: 'We talk about your brand, goals, and audience. No fluff — clarity first.', icon_light_url: '', icon_dark_url: '' },
     { id: 'strategy', number: '02', title: 'Strategy & Plan', description: 'A custom content or editing strategy built around your platform and growth targets.', icon_light_url: '', icon_dark_url: '' },
-    { id: 'execute', number: '03', title: 'Create & Execute', description: 'High-quality content and edits delivered on time with obsessive attention to detail.', icon_light_url: '', icon_dark_url: '' },
+    { id: 'execute', number: '03', title: 'Create & Execute', description: 'High-quality content and edits produced on time with obsessive attention to detail.', icon_light_url: '', icon_dark_url: '' },
     { id: 'scale', number: '04', title: 'Review & Scale', description: 'Track results, optimize from data, and scale what works. Growth is a system.', icon_light_url: '', icon_dark_url: '' }
 ]
 
@@ -36,7 +36,7 @@ const ProcessCard = ({ number, title, description, iconLightUrl, iconDarkUrl, is
                     `}
                 >
                     {iconSrc ? (
-                        <img src={iconSrc} alt={`${title} icon`} width={24} height={24} className="w-6 h-6 object-contain" />
+                        <img src={iconSrc} alt={`${title} icon`} width={24} height={24} loading="lazy" decoding="async" className="w-6 h-6 object-contain" />
                     ) : (
                         <span className="w-2 h-2 rounded-full bg-accent" />
                     )}

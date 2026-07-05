@@ -116,7 +116,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1, transition: { duration: 0.25 } }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-50 bg-black/85 backdrop-blur-[32px]"
+                        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[8px]"
                     />
                     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-6 pointer-events-none">
                         <motion.div
@@ -124,7 +124,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                             animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
                             exit={isMobile ? { opacity: 1, y: '100%' } : { opacity: 0, y: 40, scale: 0.97 }}
                             transition={isMobile ? { type: 'spring', stiffness: 400, damping: 40 } : { type: 'spring', stiffness: 300, damping: 30 }}
-                            className="w-full sm:w-full sm:max-w-[520px] md:max-w-[480px] lg:max-w-[520px] glass-strong border-0 sm:border border-strong rounded-t-[20px] sm:rounded-[20px] lg:rounded-[24px] p-6 sm:p-8 md:p-10 lg:p-12 pointer-events-auto relative shadow-none sm:shadow-2xl overflow-y-auto max-h-[90vh] sm:max-h-none"
+                            className="w-full sm:w-full sm:max-w-[520px] md:max-w-[480px] lg:max-w-[520px] glass-strong border-0 sm:border border-strong rounded-t-[20px] sm:rounded-[20px] lg:rounded-[24px] p-6 sm:p-8 md:p-10 lg:p-12 pointer-events-auto relative shadow-none sm:shadow-2xl overflow-y-auto max-h-[72vh] sm:max-h-[90vh]"
                         >
                             {/* Drag Handle — mobile only */}
                             <div className="flex justify-center mb-4 sm:hidden">

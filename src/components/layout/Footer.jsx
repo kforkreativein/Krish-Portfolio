@@ -93,7 +93,7 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
       >
         <div className="flex flex-col items-center md:items-start justify-start gap-3">
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
-            <Mail className="w-3 h-3" /> EMAIL -
+            <Mail className="w-3 h-3" /> Email
           </div>
           <a href={`mailto:${contactEmail}`} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
             {contactEmail}
@@ -101,14 +101,14 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
         </div>
         <div className="flex flex-col items-center justify-center gap-3">
           <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
-            <Phone className="w-3 h-3" /> CALL TODAY -
+            <Phone className="w-3 h-3" /> Call
           </div>
           <a href={phoneHref} className="text-lg font-medium tracking-tight text-black dark:text-white hover:text-accent transition-colors" style={{ fontFamily: '"Inter", sans-serif', textDecoration: 'none' }}>
             {displayPhone}
           </a>
         </div>
         <div className="flex flex-col items-center md:items-start lg:items-end gap-3 md:col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold"><Share2 className="w-3 h-3" /> SOCIAL :</div>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 font-semibold"><Share2 className="w-3 h-3" /> Social</div>
           <div className="flex items-center justify-center md:justify-start lg:justify-end gap-3">
             {socialLinks.map((social, i) => {
               const SocialIcon = getSocialIconByName(social.icon)
@@ -119,7 +119,7 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
                   href={social.url || social.link || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-9 h-9 rounded-lg border border-neutral-200 dark:border-neutral-800 text-black dark:text-white hover:border-accent hover:text-accent transition-all duration-300"
+                  className="flex items-center justify-center w-12 h-12 rounded-lg border border-neutral-200 dark:border-neutral-800 text-black dark:text-white hover:border-accent hover:text-accent transition-all duration-300"
                   aria-label={`Follow on ${social.icon}`}
                 >
                   <SocialIcon className="w-4 h-4" />
@@ -221,7 +221,7 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
                     href={social.url || social.link || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-md"
                     style={{ border: `1px solid ${v.iconBorder}`, backgroundColor: v.iconBg }}
                     aria-label={`Follow on ${social.icon}`}
                   >
@@ -232,10 +232,20 @@ export default function Footer({ onOpenModal, siteContent, settings: settingsPro
             </div>
 
             {/* SECTION 7 — Centered Bottom nav */}
-            <div className="flex items-center gap-2 mb-[50px]">
-              <a href="#" style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888', textDecoration: 'none' }}>HOME</a>
-              <span style={{ color: '#888888', fontSize: '10px' }}>•</span>
-              <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888' }}>{footerText}</span>
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-[50px] px-4 text-center">
+              {[
+                { label: 'Home', href: '/' },
+                { label: 'Work', href: '/#work' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Privacy', href: '/privacy' },
+                { label: 'Terms', href: '/terms' },
+                { label: 'Accessibility', href: '/accessibility' },
+              ].map(({ label, href }, i, arr) => (
+                <span key={label} className="inline-flex items-center gap-3">
+                  <a href={href} style={{ fontFamily: '"Inter", sans-serif', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#888888', textDecoration: 'none' }}>{label}</a>
+                  {i < arr.length - 1 && <span style={{ color: '#888888', fontSize: '10px' }}>•</span>}
+                </span>
+              ))}
             </div>
           </div>
         </div>

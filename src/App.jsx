@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useSettings, useSiteContent } from './hooks/useContent'
@@ -23,9 +23,12 @@ import Tools from './components/sections/Tools'
 import LogoStrip from './components/sections/LogoStrip'
 import FAQ from './components/sections/FAQ'
 
-import Admin from './pages/Admin'
-import ProjectDetail from './pages/ProjectDetail'
-import ProjectPage from './pages/ProjectPage'
+const Admin = lazy(() => import('./pages/Admin'))
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'))
+const ProjectPage = lazy(() => import('./pages/ProjectPage'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+import CookieConsent from './components/ui/CookieConsent'
 
 const DEFAULT_THEME = {
   theme_accent_light: '#0A68FF',
@@ -162,7 +165,7 @@ function Portfolio({ onOpenModal }) {
 
       <Navbar onOpenModal={onOpenModal} siteContent={siteContent} />
 
-      <main>
+      <main id="main-content">
         {(sectionOrder || [])
           .filter(sectionKey => {
             const hidden = Array.isArray(siteContent?.hidden_sections) ? siteContent.hidden_sections : []
@@ -365,15 +368,30 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
+        {/* Skip to main content link for keyboard/screen reader users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm"
+          style={{ background: 'var(--accent)', color: 'var(--btn-colored-text)' }}
+        >
+          Skip to main content
+        </a>
         <Cursor />
         <ThemeToggle />
         <ContactModal isOpen={isModalOpen} onClose={closeModal} />
         <FloatingCTA onOpenModal={openModal} settings={settings} />
-        <Routes>
-          <Route path="/" element={<Portfolio onOpenModal={openModal} />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/work/:slug" element={<ProjectPage onOpenModal={openModal} settings={settings} />} />
-        </Routes>
+        <CookieConsent />
+        <Suspense fallback={<div className="min-h-screen bg-bg" />}>
+          <Routes>
+            <Route path="/" element={<Portfolio onOpenModal={openModal} />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/work/:slug" element={<ProjectPage onOpenModal={openModal} settings={settings} />} />
+            <Route path="/privacy" element={<LegalPage pageKey="privacy" />} />
+            <Route path="/terms" element={<LegalPage pageKey="terms" />} />
+            <Route path="/accessibility" element={<LegalPage pageKey="accessibility" />} />
+            <Route path="/contact" element={<ContactPage onOpenModal={openModal} settings={settings} />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </ThemeProvider>
   )

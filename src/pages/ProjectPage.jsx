@@ -54,6 +54,24 @@ export default function ProjectPage({ onOpenModal, settings: settingsProp }) {
     const [notFound, setNotFound] = useState(false)
     // const [isModalOpen, setIsModalOpen] = useState(false) // Removed to use global onOpenModal from App.jsx
 
+    // Per-route meta for SEO
+    useEffect(() => {
+        if (!project) return
+        const title = `${project.title} — Case Study | Krish Chhatrala`
+        const desc = project.description
+            ? `${project.description.slice(0, 150)}…`
+            : `${project.title} — Video editing & AI marketing case study by Krish Chhatrala.`
+        document.title = title
+        const metaDesc = document.querySelector('meta[name="description"]')
+        if (metaDesc) metaDesc.content = desc
+        const ogTitle = document.querySelector('meta[property="og:title"]')
+        if (ogTitle) ogTitle.content = title
+        const ogDesc = document.querySelector('meta[property="og:description"]')
+        if (ogDesc) ogDesc.content = desc
+        const ogUrl = document.querySelector('meta[property="og:url"]')
+        if (ogUrl) ogUrl.content = `https://krishchhatrala.live/work/${slug}`
+    }, [project, slug])
+
     useEffect(() => {
         async function load() {
             setLoading(true)
